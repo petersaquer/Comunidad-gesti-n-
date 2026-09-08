@@ -21,7 +21,7 @@ import {
   initialIndertDocuments,
   initialLandRequests,
   initialCommunityPosts,
-} from '../data/initialData';
+} from '../mockData/initialData';
 
 const STORAGE_KEYS = {
   RESIDENTS: 'comunidapp_residents_v1',

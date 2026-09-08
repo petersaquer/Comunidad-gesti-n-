@@ -26,7 +26,7 @@ import {
   initialIndertDocuments,
   initialLandRequests,
   initialCommunityPosts,
-} from '../src/data/initialData';
+} from '../src/mockData/initialData';
 import {
   hashPassword,
   sanitizeUser,
