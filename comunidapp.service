@@ -1,0 +1,31 @@
+# ==============================================================================
+# Servicio Systemd para ComunidApp (Sector 16 INDERT)
+# Ubicación: /etc/systemd/system/comunidapp.service
+# Comandos de activación:
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable comunidapp
+#   sudo systemctl start comunidapp
+#   sudo systemctl status comunidapp
+# ==============================================================================
+
+[Unit]
+Description=ComunidApp Sector 16 INDERT - Node.js App
+After=network.target
+
+[Service]
+Type=simple
+User=admin
+WorkingDirectory=/home/admin/web/s16.mi-comunidad.org/public_html
+ExecStart=/usr/bin/node dist/server.cjs
+Restart=always
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=PORT=3000
+
+# Límites de seguridad y recursos
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=comunidapp
+
+[Install]
+WantedBy=multi-user.target

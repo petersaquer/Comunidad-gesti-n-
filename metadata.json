@@ -1,0 +1,6 @@
+{
+  "name": "S16 - Gestión Comunitaria INDERT",
+  "description": "Sistema S16 para la gestión integral de residentes, censos, asignación de lotes, solicitudes de terreno, reubicaciones, expedientes INDERT y rendición de gastos.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
