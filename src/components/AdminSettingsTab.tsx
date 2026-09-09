@@ -58,7 +58,7 @@ import {
   SQLiteStats,
   SQLQueryResult,
   SecurityAuditReport,
-} from '../utils/sqliteClient';
+} from '../utils/firebaseClient';
 
 interface AdminSettingsTabProps {
   settings: CommunitySettings;

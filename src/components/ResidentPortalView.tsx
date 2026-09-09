@@ -28,6 +28,7 @@ import {
   CommunitySettings,
 } from '../types';
 import { downloadResidentCertificate, downloadIndertDocument } from '../utils/fileDownloader';
+import { ResidentCarnetModal } from "./ResidentCarnetModal";
 import { downloadCommunityGuidePdf } from '../utils/communityDocPdfGenerator';
 import { formatGuaranies } from '../utils/currency';
 import { Heart, Accessibility, FileCheck, Eye, X, BookOpen, ShieldAlert } from 'lucide-react';
@@ -63,6 +64,7 @@ export const ResidentPortalView: React.FC<ResidentPortalViewProps> = ({
   onOpenCommunityGuideModal,
   onOpenLegalTermsModal,
 }) => {
+  const [isCarnetOpen, setIsCarnetOpen] = useState(false);
   // Filter resident contributions
   const residentContributions = resident
     ? contributions.filter((c) => c.residentId === resident.id)
@@ -143,6 +145,7 @@ export const ResidentPortalView: React.FC<ResidentPortalViewProps> = ({
             {/* Top Quick Actions */}
             <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2">
               {resident && (
+                <>
                 <button
                   id="btn-download-my-certificate"
                   onClick={() => downloadResidentCertificate(resident, contributions, settings)}
@@ -152,6 +155,15 @@ export const ResidentPortalView: React.FC<ResidentPortalViewProps> = ({
                   <Download className="w-4 h-4" />
                   Certificado de Ocupación
                 </button>
+                <button
+                  onClick={() => setIsCarnetOpen(true)}
+                  className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                  title="Ver Carnet Comunitario QR"
+                >
+                  <User className="w-4 h-4" />
+                  Mi Carnet QR
+                </button>
+                </>
               )}
               {onOpenChangePassword && (
                 <button
@@ -656,6 +668,15 @@ export const ResidentPortalView: React.FC<ResidentPortalViewProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {resident && (
+        <ResidentCarnetModal
+          isOpen={isCarnetOpen}
+          onClose={() => setIsCarnetOpen(false)}
+          resident={resident}
+          settings={settings}
+        />
       )}
     </div>
   );

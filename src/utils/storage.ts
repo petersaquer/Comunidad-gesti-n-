@@ -9,6 +9,7 @@ import {
   IndertDocument,
   LandRequest,
   CommunityPost,
+  Meeting,
 } from '../types';
 import {
   initialResidents,
@@ -21,6 +22,7 @@ import {
   initialIndertDocuments,
   initialLandRequests,
   initialCommunityPosts,
+  initialMeetings,
 } from '../mockData/initialData';
 
 const STORAGE_KEYS = {
@@ -35,6 +37,7 @@ const STORAGE_KEYS = {
   INDERT_DOCS: 'comunidapp_indert_docs_v1',
   LAND_REQUESTS: 'comunidapp_land_requests_v1',
   POSTS: 'comunidapp_posts_v1',
+  MEETINGS: 'comunidapp_meetings_v1',
 };
 
 export const loadData = <T>(key: string, fallback: T): T => {
@@ -105,6 +108,7 @@ export const getInitialAppState = () => {
     indertDocs: loadData<IndertDocument[]>(STORAGE_KEYS.INDERT_DOCS, initialIndertDocuments),
     landRequests: loadData<LandRequest[]>(STORAGE_KEYS.LAND_REQUESTS, initialLandRequests),
     posts: loadData<CommunityPost[]>(STORAGE_KEYS.POSTS, initialCommunityPosts),
+    meetings: loadData<Meeting[]>(STORAGE_KEYS.MEETINGS, initialMeetings),
   };
 };
 
@@ -120,6 +124,7 @@ export const saveAllAppState = (state: {
   indertDocs: IndertDocument[];
   landRequests: LandRequest[];
   posts?: CommunityPost[];
+  meetings?: import('../types').Meeting[];
 }) => {
   saveData(STORAGE_KEYS.RESIDENTS, state.residents);
   saveData(STORAGE_KEYS.CONTRIBUTIONS, state.contributions);
@@ -133,6 +138,9 @@ export const saveAllAppState = (state: {
   saveData(STORAGE_KEYS.LAND_REQUESTS, state.landRequests);
   if (state.posts) {
     saveData(STORAGE_KEYS.POSTS, state.posts);
+  }
+  if (state.meetings) {
+    saveData(STORAGE_KEYS.MEETINGS, state.meetings);
   }
 };
 
@@ -148,6 +156,7 @@ export const resetToDemoData = () => {
   localStorage.removeItem(STORAGE_KEYS.INDERT_DOCS);
   localStorage.removeItem(STORAGE_KEYS.LAND_REQUESTS);
   localStorage.removeItem(STORAGE_KEYS.POSTS);
+  localStorage.removeItem(STORAGE_KEYS.MEETINGS);
   return {
     residents: initialResidents,
     contributions: initialContributions,
@@ -156,10 +165,11 @@ export const resetToDemoData = () => {
     incidents: initialIncidents,
     settings: initialSettings,
     users: initialUsers,
-    currentUser: initialUsers[0],
+    currentUser: null,
     indertDocs: initialIndertDocuments,
     landRequests: initialLandRequests,
     posts: initialCommunityPosts,
+    meetings: initialMeetings,
   };
 };
 

@@ -1324,3 +1324,5 @@ export const initialCommunityPosts: CommunityPost[] = [
   },
 ];
 
+
+export const initialMeetings: import('../types').Meeting[] = [];

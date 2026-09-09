@@ -425,6 +425,11 @@ function initSchema(db: any) {
       data_json TEXT NOT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+    CREATE TABLE IF NOT EXISTS meetings (
+      id TEXT PRIMARY KEY,
+      data_json TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
   `);
 
   // Check if initial seeding is needed
@@ -789,6 +794,9 @@ export function getAllAppStateFromSQLite() {
   const landRequestsRows = db.prepare('SELECT data_json FROM land_requests ORDER BY request_date DESC').all() as { data_json: string }[];
   const landRequests: LandRequest[] = landRequestsRows.map((lr) => JSON.parse(lr.data_json));
 
+  const meetingsRows = db.prepare('SELECT data_json FROM meetings ORDER BY created_at DESC').all() as { data_json: string }[];
+  const meetings = meetingsRows.map((m) => JSON.parse(m.data_json));
+
   // Relocation Records
   const relocationRows = db.prepare('SELECT data_json FROM relocation_records ORDER BY date DESC').all() as { data_json: string }[];
   const relocationRecords: RelocationRecord[] = relocationRows.map((rr) => JSON.parse(rr.data_json));
@@ -815,6 +823,7 @@ export function getAllAppStateFromSQLite() {
     landRequests,
     relocationRecords,
     posts,
+    meetings,
   };
 }
 
@@ -1182,6 +1191,14 @@ export function saveAllAppStateToSQLite(appState: any) {
       }
     }
 
+    if (Array.isArray(appState.meetings)) {
+      db.prepare('DELETE FROM meetings').run();
+      const insertMeeting = db.prepare('INSERT OR REPLACE INTO meetings (id, data_json) VALUES (?, ?)');
+      for (const m of appState.meetings) {
+        insertMeeting.run(m.id, JSON.stringify(m));
+      }
+    }
+
     db.exec('COMMIT;');
     return true;
   } catch (err) {
@@ -1309,6 +1326,7 @@ export function resetSQLiteDatabase() {
   db.exec('DELETE FROM relocation_records;');
   db.exec('DELETE FROM users;');
   db.exec('DELETE FROM posts;');
+  db.exec('DELETE FROM meetings;');
   db.exec('DELETE FROM settings;');
   seedInitialData(db);
   return getAllAppStateFromSQLite();

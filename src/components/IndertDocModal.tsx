@@ -85,6 +85,12 @@ export const IndertDocModal: React.FC<IndertDocModalProps> = ({
   if (!isOpen) return null;
 
   const handleFileChange = (file: File) => {
+    // Firestore Document Limit is 1MB. Base64 adds ~33% overhead. Max safe file size is ~700KB.
+    if (file.size > 700 * 1024) {
+      alert('Error: El archivo excede el límite de 700 KB para almacenamiento en la base de datos (Firestore). Por favor, comprima el archivo antes de subirlo.');
+      return;
+    }
+
     const sizeInMB = file.size / (1024 * 1024);
     const sizeStr =
       sizeInMB < 1

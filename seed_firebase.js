@@ -1,0 +1,3 @@
+import { initialResidents, initialContributions, initialExpenses, initialShifts, initialIncidents, initialSettings, initialUsers, initialIndertDocuments, initialLandRequests, initialCommunityPosts, initialMeetings } from './src/mockData/initialData';
+
+// We need to write a seed script that writes to firebase...

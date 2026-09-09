@@ -36,10 +36,10 @@ import {
   resetToDemoData,
 } from './utils/storage';
 import {
-  fetchStateFromSQLite,
-  syncStateToSQLite,
-  resetSQLiteOnServer,
-} from './utils/sqliteClient';
+  fetchStateFromFirebase,
+  syncStateToFirebase,
+  resetFirebaseOnServer,
+} from './utils/firebaseClient';
 import { FacebookHeader } from './components/FacebookHeader';
 import { FacebookStories } from './components/FacebookStories';
 import { MobileBottomNav } from './components/MobileBottomNav';
@@ -49,6 +49,7 @@ import { ResidentsTab } from './components/ResidentsTab';
 import { FinancesTab } from './components/FinancesTab';
 import { BalanceTab } from './components/BalanceTab';
 import { ShiftsTab } from './components/ShiftsTab';
+import { MeetingsTab } from "./components/MeetingsTab";
 import { IncidentsTab } from './components/IncidentsTab';
 import { AntiFraudTab } from './components/AntiFraudTab';
 import { ResidentPortalView } from './components/ResidentPortalView';
@@ -86,6 +87,7 @@ export default function App() {
     currentUser,
     indertDocs,
     landRequests,
+    meetings = [],
   } = appState;
 
   // Active Tab: default to 'feed' (Facebook Wall) or 'indert'
@@ -100,6 +102,7 @@ export default function App() {
     | 'antifraud'
     | 'my_account'
     | 'admin_settings'
+    | 'meetings'
   >('feed');
 
   // Modal States
@@ -144,7 +147,7 @@ export default function App() {
 
   // Load initial state from native SQLite database on boot
   useEffect(() => {
-    fetchStateFromSQLite().then((sqliteData) => {
+    fetchStateFromFirebase().then((sqliteData) => {
       if (sqliteData) {
         setAppState((prev) => ({
           ...prev,
@@ -158,7 +161,7 @@ export default function App() {
   // Synchronize with LocalStorage and SQLite on any change
   useEffect(() => {
     saveAllAppState(appState);
-    syncStateToSQLite(appState);
+    syncStateToFirebase(appState);
   }, [appState]);
 
   // Auth Handlers
@@ -679,6 +682,26 @@ export default function App() {
     }));
   };
 
+  // Handlers for Meetings
+  const handleSaveMeeting = (meeting: import('./types').Meeting) => {
+    setAppState((prev) => {
+      const exists = (prev.meetings || []).some((m) => m.id === meeting.id);
+      return {
+        ...prev,
+        meetings: exists
+          ? (prev.meetings || []).map((m) => (m.id === meeting.id ? meeting : m))
+          : [meeting, ...(prev.meetings || [])],
+      };
+    });
+  };
+
+  const handleDeleteMeeting = (id: string) => {
+    setAppState((prev) => ({
+      ...prev,
+      meetings: (prev.meetings || []).filter((m) => m.id !== id),
+    }));
+  };
+
   // Handlers for Incidents
   const handleSaveIncident = (incident: Incident) => {
     setAppState((prev) => {
@@ -757,7 +780,7 @@ export default function App() {
         '¿Desea restaurar la base de datos SQLite y datos de demostración con los expedientes INDERT, residentes, lotes, aportes y faenas iniciales?'
       )
     ) {
-      const serverData = await resetSQLiteOnServer();
+      const serverData = await resetFirebaseOnServer();
       if (serverData) {
         setAppState((prev) => ({
           ...serverData,
@@ -996,6 +1019,20 @@ export default function App() {
                 >
                   <Calendar className="w-4 h-4" />
                   <span>Faenas & Turnos</span>
+                </button>
+              )}
+              {currentUser && (currentUser.role === "admin" || currentUser.permissions?.canManageShifts) && (
+                <button
+                  id="subnav-meetings"
+                  onClick={() => setActiveTab("meetings")}
+                  className={`py-1.5 px-3 sm:px-3.5 rounded-full font-bold flex items-center gap-1.5 whitespace-nowrap transition-all cursor-pointer ${
+                    activeTab === "meetings"
+                      ? "bg-[#1877F2] text-white shadow-2xs"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                  }`}
+                >
+                  <Users className="w-4 h-4" />
+                  <span>Reuniones (QR)</span>
                 </button>
               )}
 
@@ -1307,6 +1344,23 @@ export default function App() {
           />
         )}
 
+        {activeTab === "meetings" && (!currentUser || (!currentUser.permissions?.canManageShifts && currentUser.role !== "admin")) && (
+          <div className="flex flex-col items-center justify-center py-12 text-slate-500">
+            <ShieldAlert className="w-12 h-12 text-rose-300 mb-3" />
+            <p className="font-bold text-lg">Acceso Restringido</p>
+            <p className="text-sm">No tienes permisos para ver las reuniones.</p>
+          </div>
+        )}
+        {activeTab === "meetings" && currentUser && (currentUser.role === "admin" || currentUser.permissions?.canManageShifts) && (
+          <MeetingsTab
+            meetings={meetings}
+            residents={residents}
+            settings={settings}
+            currentUser={currentUser}
+            onSaveMeeting={handleSaveMeeting}
+            onDeleteMeeting={handleDeleteMeeting}
+          />
+        )}
         {/* Tab 7: Incidents Panel */}
         {activeTab === 'incidents' && (!currentUser || (!currentUser.permissions?.canManageIncidents && currentUser.role !== 'admin')) && (
           <div className="flex flex-col items-center justify-center py-12 text-slate-500">

@@ -42,6 +42,12 @@ export const DocumentPhotoUploader: React.FC<DocumentPhotoUploaderProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Firestore Document Limit is 1MB. Max safe file size is ~700KB.
+    if (file.size > 700 * 1024) {
+      alert('Error: La imagen excede el límite de 700 KB para almacenamiento en la base de datos (Firestore). Por favor, utilice una imagen de menor resolución.');
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = () => {
       const dataUrl = reader.result as string;

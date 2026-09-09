@@ -1,0 +1,192 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function existing() { return resource.data; }
+    function incoming() { return request.resource.data; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+
+    // This community app is a public transparency ledger. 
+    // Reads are public so all neighbors can see the feed, docs, and finances.
+    // Writes require authentication.
+
+    function isValidResident(data) {
+      return data.keys().hasAll(['id', 'fullName', 'documentId', 'block', 'lot', 'status'])
+        && data.id is string
+        && data.fullName is string
+        && data.documentId is string
+        && data.block is string
+        && data.lot is string
+        && data.status is string;
+    }
+
+    match /residents/{residentId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(residentId) && isValidResident(incoming());
+      allow update: if isSignedIn() && isValidId(residentId) && isValidResident(incoming());
+      allow delete: if isSignedIn() && isValidId(residentId);
+    }
+
+    function isValidMeeting(data) {
+      return data.keys().hasAll(['id', 'title', 'date', 'status', 'attendees', 'createdAt'])
+        && data.id is string
+        && data.title is string
+        && data.date is string
+        && data.status is string
+        && data.attendees is list
+        && data.createdAt is string;
+    }
+
+    match /meetings/{meetingId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(meetingId) && isValidMeeting(incoming());
+      allow update: if isSignedIn() && isValidId(meetingId) && isValidMeeting(incoming());
+      allow delete: if isSignedIn() && isValidId(meetingId);
+    }
+
+    function isValidUserAccount(data) {
+      return data.keys().hasAll(['id', 'documentId', 'fullName', 'phone', 'role', 'createdAt'])
+        && data.id is string
+        && data.documentId is string
+        && data.fullName is string
+        && data.phone is string
+        && data.role is string
+        && data.createdAt is string;
+    }
+
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(userId) && isValidUserAccount(incoming());
+      allow update: if isSignedIn() && isValidId(userId) && isValidUserAccount(incoming());
+      allow delete: if isSignedIn() && isValidId(userId);
+    }
+
+    function isValidCommunityPost(data) {
+      return data.keys().hasAll(['id', 'authorName', 'authorRole', 'authorAvatarColor', 'date', 'content', 'likes', 'comments'])
+        && data.id is string
+        && data.authorName is string
+        && data.authorRole is string
+        && data.date is string
+        && data.content is string
+        && data.likes is number
+        && data.comments is list;
+    }
+
+    match /posts/{postId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(postId) && isValidCommunityPost(incoming());
+      allow update: if isSignedIn() && isValidId(postId) && isValidCommunityPost(incoming());
+      allow delete: if isSignedIn() && isValidId(postId);
+    }
+
+    function isValidContribution(data) {
+      return data.keys().hasAll(['id', 'residentId', 'amount', 'status'])
+        && data.id is string
+        && data.residentId is string
+        && data.amount is number
+        && data.status is string;
+    }
+
+    match /contributions/{contributionId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(contributionId) && isValidContribution(incoming());
+      allow update: if isSignedIn() && isValidId(contributionId) && isValidContribution(incoming());
+      allow delete: if isSignedIn() && isValidId(contributionId);
+    }
+
+    function isValidExpense(data) {
+      return data.keys().hasAll(['id', 'amount', 'status', 'title'])
+        && data.id is string
+        && data.amount is number
+        && data.status is string
+        && data.title is string;
+    }
+
+    match /expenses/{expenseId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(expenseId) && isValidExpense(incoming());
+      allow update: if isSignedIn() && isValidId(expenseId) && isValidExpense(incoming());
+      allow delete: if isSignedIn() && isValidId(expenseId);
+    }
+
+    function isValidIndertDocument(data) {
+      return data.keys().hasAll(['id', 'title', 'category', 'documentNumber'])
+        && data.id is string
+        && data.title is string
+        && data.category is string
+        && data.documentNumber is string;
+    }
+
+    match /indert_docs/{docId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(docId) && isValidIndertDocument(incoming());
+      allow update: if isSignedIn() && isValidId(docId) && isValidIndertDocument(incoming());
+      allow delete: if isSignedIn() && isValidId(docId);
+    }
+
+    function isValidLandRequest(data) {
+      return data.keys().hasAll(['id', 'applicantName', 'status'])
+        && data.id is string
+        && data.applicantName is string
+        && data.status is string;
+    }
+
+    match /land_requests/{requestId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(requestId) && isValidLandRequest(incoming());
+      allow update: if isSignedIn() && isValidId(requestId) && isValidLandRequest(incoming());
+      allow delete: if isSignedIn() && isValidId(requestId);
+    }
+
+    function isValidMaintenanceShift(data) {
+      return data.keys().hasAll(['id', 'taskTitle', 'assignedResidentId', 'status'])
+        && data.id is string
+        && data.taskTitle is string
+        && data.assignedResidentId is string
+        && data.status is string;
+    }
+
+    match /shifts/{shiftId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(shiftId) && isValidMaintenanceShift(incoming());
+      allow update: if isSignedIn() && isValidId(shiftId) && isValidMaintenanceShift(incoming());
+      allow delete: if isSignedIn() && isValidId(shiftId);
+    }
+
+    function isValidIncident(data) {
+      return data.keys().hasAll(['id', 'title', 'priority', 'status'])
+        && data.id is string
+        && data.title is string
+        && data.priority is string
+        && data.status is string;
+    }
+
+    match /incidents/{incidentId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(incidentId) && isValidIncident(incoming());
+      allow update: if isSignedIn() && isValidId(incidentId) && isValidIncident(incoming());
+      allow delete: if isSignedIn() && isValidId(incidentId);
+    }
+
+    function isValidRelocationRecord(data) {
+      return data.keys().hasAll(['id', 'residentId', 'date'])
+        && data.id is string
+        && data.residentId is string
+        && data.date is string;
+    }
+
+    match /relocation_records/{recordId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(recordId) && isValidRelocationRecord(incoming());
+      allow update: if isSignedIn() && isValidId(recordId) && isValidRelocationRecord(incoming());
+      allow delete: if isSignedIn() && isValidId(recordId);
+    }
+  }
+}

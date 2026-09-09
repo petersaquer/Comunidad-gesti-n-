@@ -329,3 +329,12 @@ export interface CommunityPost {
   badge?: string;
   badgeType?: 'indert' | 'finances' | 'shift';
 }
+
+export interface Meeting {
+  id: string;
+  title: string;
+  date: string; // ISO string for the scheduled date/time
+  status: 'scheduled' | 'active' | 'completed';
+  attendees: string[]; // List of resident document IDs or standard IDs
+  createdAt: string;
+}

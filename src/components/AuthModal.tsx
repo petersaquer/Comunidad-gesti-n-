@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { UserAccount, UserRole, Resident } from '../types';
 import { S16Logo } from './S16Logo';
-import { loginWithServer, registerOnServer } from '../utils/sqliteClient';
+import { loginWithServer, registerOnServer } from '../utils/firebaseClient';
 
 interface AuthModalProps {
   isOpen: boolean;

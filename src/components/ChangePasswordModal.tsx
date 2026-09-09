@@ -10,7 +10,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { UserAccount } from '../types';
-import { changePasswordOnServer } from '../utils/sqliteClient';
+import { changePasswordOnServer } from '../utils/firebaseClient';
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
