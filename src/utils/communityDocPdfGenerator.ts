@@ -169,11 +169,14 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
   ];
 
   prioritiesList.forEach((p) => {
-    checkPageBreak(17, pageNumRef);
+    const splitItems = doc.splitTextToSize(p.items, contentWidth - 6);
+    const boxHeight = 7.5 + splitItems.length * 3.4;
+    checkPageBreak(boxHeight + 3, pageNumRef);
+
     doc.setFillColor(248, 250, 252);
-    doc.roundedRect(margin, currentY, contentWidth, 16.5, 1.5, 1.5, 'F');
+    doc.roundedRect(margin, currentY, contentWidth, boxHeight, 1.5, 1.5, 'F');
     doc.setDrawColor(226, 232, 240);
-    doc.roundedRect(margin, currentY, contentWidth, 16.5, 1.5, 1.5, 'D');
+    doc.roundedRect(margin, currentY, contentWidth, boxHeight, 1.5, 1.5, 'D');
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(7.5);
@@ -183,10 +186,9 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7);
     doc.setTextColor(51, 65, 85);
-    const splitItems = doc.splitTextToSize(p.items, contentWidth - 6);
     doc.text(splitItems, margin + 3, currentY + 8);
 
-    currentY += 18.5;
+    currentY += boxHeight + 2.5;
   });
 
   // Inhabilitaciones
@@ -198,12 +200,12 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7.5);
   doc.setTextColor(153, 27, 27);
-  doc.text('🚫 QUIÉNES QUEDAN INHABILITADOS O RECHAZADOS PARA ACCEDER A UN LOTE:', margin + 3, currentY + 4.2);
+  doc.text('[INHABILITACIONES] QUIENES QUEDAN EXCLUIDOS DE POSTULAR:', margin + 3, currentY + 4.2);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6.8);
   doc.setTextColor(185, 28, 28);
   doc.text(
-    'Propietarios de otros inmuebles inscritos en la DGRP, personas con fines de lucro/reventa o antecedentes de usurpación.',
+    'Propietarios de otros inmuebles inscritos en la DGRP, personas con fines de lucro/reventa o antecedentes de usurpacion.',
     margin + 3,
     currentY + 8.5
   );
@@ -218,62 +220,64 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
   currentY = 20;
 
   // SECCIÓN 3: PROCESO DE POSTULACIÓN, REQUISITOS Y TIEMPOS OFICIALES
-  renderSectionHeader('3. PROCESO DE POSTULACIÓN, REQUISITOS Y TIEMPOS DE APROBACIÓN');
+  renderSectionHeader('3. PROCESO DE POSTULACION, REQUISITOS Y TIEMPOS DE APROBACION');
 
   const processSteps = [
     {
       num: '1',
-      title: 'Presentación de Carpeta de Postulación (Día 1):',
-      desc: 'Entrega del formulario en Secretaría con fotocopias autenticadas de C.I. del grupo familiar, certificado de vida y residencia, y declaración jurada de no poseer inmueble.',
+      title: 'Presentacion de Carpeta de Postulacion (Dia 1):',
+      desc: 'Entrega del formulario en Secretaria con fotocopias autenticadas de C.I. del grupo familiar, certificado de vida y residencia, y declaracion jurada de no poseer inmueble.',
     },
     {
       num: '2',
-      title: 'Evaluación Socio-Ambiental y Verificación en Sistema S16 (Días 2 al 10):',
-      desc: 'La Comisión realiza la entrevista social y constata en el sistema la disponibilidad de un lote vacante libre de litigios y no reservado para calles o plazas públicas.',
+      title: 'Evaluacion Socio-Ambiental y Verificacion en Sistema S16 (Dias 2 al 10):',
+      desc: 'La Comision realiza la entrevista social y constata en el sistema la disponibilidad de un lote vacante libre de litigios y no reservado para calles o plazas publicas.',
     },
     {
       num: '3',
-      title: 'Dictamen de Asignación y Aprobación Comunal (Días 11 al 20 - TIEMPO DE APROBACIÓN):',
-      desc: 'La Comisión Vecinal evalúa la carpeta según la escala de prioridades y emite dictamen fundado en un plazo promedio de 15 a 30 días calendario.',
+      title: 'Dictamen de Asignacion y Aprobacion Comunal (Dias 11 al 20 - TIEMPO DE APROBACION):',
+      desc: 'La Comision Vecinal evalua la carpeta segun la escala de prioridades y emite dictamen fundado en un plazo promedio de 15 a 30 dias calendario.',
     },
     {
       num: '4',
-      title: 'Firma de Acta de Posesión y Emisión de Certificado S16 (Días 21 al 25):',
-      desc: 'Se asienta en el Libro de Actas formal, se da de alta en el padrón digital del Sistema S16 y se emite el Certificado Oficial de Ocupación para trámites de luz y agua.',
+      title: 'Firma de Acta de Posesion y Emision de Certificado S16 (Dias 21 al 25):',
+      desc: 'Se asienta en el Libro de Actas formal, se da de alta en el padron digital del Sistema S16 y se emite el Certificado Oficial de Ocupacion para tramites de luz y agua.',
     },
     {
       num: '5',
-      title: 'Plazo Perentorio de Ocupación y Mejoras (Plazo de 30 a 90 días):',
-      desc: 'El postulante debe cercar y limpiar en 30 días y habitar el lote en un máximo de 90 días. Lotes en abandono u ociosos caducan automáticamente.',
+      title: 'Plazo Perentorio de Ocupacion y Mejoras (Plazo de 30 a 90 dias):',
+      desc: 'El postulante debe cercar y limpiar en 30 dias y habitar el lote en un maximo de 90 dias. Lotes en abandono u ociosos caducan automaticamente.',
     },
   ];
 
   processSteps.forEach((st) => {
-    checkPageBreak(15, pageNumRef);
+    const splitSt = doc.splitTextToSize(st.desc, contentWidth - 15);
+    const boxHeight = Math.max(13, 6.5 + splitSt.length * 3.3);
+    checkPageBreak(boxHeight + 2.5, pageNumRef);
+
     doc.setFillColor(248, 250, 252);
-    doc.roundedRect(margin, currentY, contentWidth, 13.5, 1.5, 1.5, 'F');
+    doc.roundedRect(margin, currentY, contentWidth, boxHeight, 1.5, 1.5, 'F');
     doc.setDrawColor(226, 232, 240);
-    doc.roundedRect(margin, currentY, contentWidth, 13.5, 1.5, 1.5, 'D');
+    doc.roundedRect(margin, currentY, contentWidth, boxHeight, 1.5, 1.5, 'D');
 
     doc.setFillColor(24, 119, 242);
-    doc.roundedRect(margin + 2, currentY + 2, 7, 7, 1, 1, 'F');
+    doc.roundedRect(margin + 2.5, currentY + 2.5, 6.5, 6.5, 1, 1, 'F');
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8);
     doc.setTextColor(255, 255, 255);
-    doc.text(st.num, margin + 5.5, currentY + 6.7, { align: 'center' });
+    doc.text(st.num, margin + 5.75, currentY + 6.9, { align: 'center' });
 
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(7.5);
+    doc.setFontSize(7.3);
     doc.setTextColor(15, 23, 42);
-    doc.text(st.title, margin + 11, currentY + 4.2);
+    doc.text(st.title, margin + 11.5, currentY + 4.5);
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(6.8);
     doc.setTextColor(71, 85, 105);
-    const splitSt = doc.splitTextToSize(st.desc, contentWidth - 14);
-    doc.text(splitSt, margin + 11, currentY + 8);
+    doc.text(splitSt, margin + 11.5, currentY + 8.2);
 
-    currentY += 15.5;
+    currentY += boxHeight + 2;
   });
 
   currentY += 2;
@@ -283,37 +287,39 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
 
   const legalItems = [
     {
-      law: 'Constitución Nacional del Paraguay (Arts. 114 y 115):',
+      law: 'Constitucion Nacional del Paraguay (Arts. 114 y 115):',
       desc: 'Reforma Agraria, fomento a la pequeña propiedad y derecho a la vivienda digna para familias rurales y urbanas.',
     },
     {
       law: 'Ley N° 1863/02 "Estatuto Agrario" y Ley N° 2419/04 (INDERT):',
-      desc: 'Define beneficiarios, acreditación de arraigo ininterrumpido y prohibición expresa de especulación o reventa de lotes estatales.',
+      desc: 'Define beneficiarios, acreditacion de arraigo ininterrumpido y prohibicion expresa de especulacion o reventa de lotes estatales.',
     },
     {
-      law: 'Código Civil Paraguayo (Art. 1909 y conc.):',
-      desc: 'Protección jurídica de la posesión pacífica, pública y de buena fe de quienes habitan e introducen mejoras.',
+      law: 'Codigo Civil Paraguayo (Art. 1909 y conc.):',
+      desc: 'Proteccion juridica de la posesion pacifica, publica y de buena fe de quienes habitan e introducen mejoras.',
     },
   ];
 
   legalItems.forEach((item) => {
-    checkPageBreak(11, pageNumRef);
+    const splitL = doc.splitTextToSize(item.desc, contentWidth - 6);
+    const boxHeight = 6.5 + splitL.length * 3.3;
+    checkPageBreak(boxHeight + 2, pageNumRef);
+
     doc.setFillColor(239, 246, 255);
-    doc.roundedRect(margin, currentY, contentWidth, 9.5, 1.2, 1.2, 'F');
+    doc.roundedRect(margin, currentY, contentWidth, boxHeight, 1.2, 1.2, 'F');
     doc.setDrawColor(219, 234, 254);
-    doc.roundedRect(margin, currentY, contentWidth, 9.5, 1.2, 1.2, 'D');
+    doc.roundedRect(margin, currentY, contentWidth, boxHeight, 1.2, 1.2, 'D');
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(7.5);
     doc.setTextColor(30, 58, 138);
-    doc.text(`⚖️ ${item.law}`, margin + 3, currentY + 3.8);
+    doc.text(`• ${item.law}`, margin + 3, currentY + 4);
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(6.8);
     doc.setTextColor(51, 65, 85);
-    const splitL = doc.splitTextToSize(item.desc, contentWidth - 6);
-    doc.text(splitL, margin + 3, currentY + 7.2);
-    currentY += 11.5;
+    doc.text(splitL, margin + 3, currentY + 7.6);
+    currentY += boxHeight + 2;
   });
 
   // ==========================================
@@ -328,52 +334,60 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
 
   const antifraudItems = [
     {
-      tag: '1. CANDADO DIGITAL',
+      tag: 'CANDADO 1',
       title: 'EVITA LA VENTA DOBLE Y SOLAPAMIENTO DE LOTES',
-      sol: 'El sistema bloquea automáticamente cualquier intento de asignar una Manzana y Lote ya adjudicados.',
+      sol: 'El sistema bloquea automaticamente cualquier intento de asignar una Manzana y Lote ya adjudicados.',
     },
     {
-      tag: '2. RECIBO DIGITAL OBLIGATORIO',
+      tag: 'CANDADO 2',
       title: 'EVITA COBROS PARALELOS O INFORMALES',
-      sol: 'Todo pago requiere comprobante oficial emitido por el sistema con código único y firma de Tesorería.',
+      sol: 'Todo pago requiere comprobante oficial emitido por el sistema con codigo unico y firma de Tesoreria.',
     },
     {
-      tag: '3. CAJA ABIERTA 24 HORAS',
-      title: 'EVITA EL DESVÍO DE FONDOS COMUNALES',
+      tag: 'CANDADO 3',
+      title: 'EVITA EL DESVIO DE FONDOS COMUNALES',
       sol: 'Cada egreso (combustible, tubos, tractor, mensura) se registra con comprobante y descuenta en tiempo real.',
     },
     {
-      tag: '4. HISTORIAL INALTERABLE',
-      title: 'EVITA EL DESPOJO INJUSTO DE POSESIÓN',
+      tag: 'CANDADO 4',
+      title: 'EVITA EL DESPOJO INJUSTO DE POSESION',
       sol: 'El sistema custodia fecha de ingreso, mejoras construidas y actas de asamblea como prueba fehaciente.',
     },
     {
-      tag: '5. RESPALDO DIGITAL PROTEGIDO',
-      title: 'EVITA LA PÉRDIDA O EXTRAVÍO DE CUADERNOS',
-      sol: 'Base de datos protegida con copias de seguridad descargables e inmutables.',
+      tag: 'CANDADO 5',
+      title: 'EVITA LA PERDIDA O EXTRAVIO DE CUADERNOS',
+      sol: 'Base de datos protegida con copias de seguridad descargables e inmutables en la nube.',
     },
   ];
 
   antifraudItems.forEach((item) => {
-    checkPageBreak(14, pageNumRef);
-    doc.setFillColor(248, 250, 252);
-    doc.roundedRect(margin, currentY, contentWidth, 11.5, 1.5, 1.5, 'F');
-    doc.setDrawColor(226, 232, 240);
-    doc.roundedRect(margin, currentY, contentWidth, 11.5, 1.5, 1.5, 'D');
+    const splitSol = doc.splitTextToSize(`Garantia S16: ${item.sol}`, contentWidth - 6);
+    const boxHeight = 8 + splitSol.length * 3.3;
+    checkPageBreak(boxHeight + 2, pageNumRef);
 
+    doc.setFillColor(248, 250, 252);
+    doc.roundedRect(margin, currentY, contentWidth, boxHeight, 1.5, 1.5, 'F');
+    doc.setDrawColor(226, 232, 240);
+    doc.roundedRect(margin, currentY, contentWidth, boxHeight, 1.5, 1.5, 'D');
+
+    // Tag and title dynamically measured to prevent ANY overlap
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(7.2);
     doc.setTextColor(185, 28, 28);
-    doc.text(`[${item.tag}]`, margin + 3, currentY + 4);
-    doc.setTextColor(15, 23, 42);
-    doc.text(item.title, margin + 28, currentY + 4);
+    const tagFormatted = `[${item.tag}]`;
+    doc.text(tagFormatted, margin + 3, currentY + 4.3);
 
-    doc.setFont('helvetica', 'bold');
+    const tagWidth = doc.getTextWidth(tagFormatted);
+    doc.setTextColor(15, 23, 42);
+    doc.text(`—  ${item.title}`, margin + 3 + tagWidth + 2.5, currentY + 4.3);
+
+    // Guarantee underneath
+    doc.setFont('helvetica', 'normal');
     doc.setFontSize(6.8);
     doc.setTextColor(22, 101, 52);
-    doc.text(`Garantía S16: ${item.sol}`, margin + 3, currentY + 8);
+    doc.text(splitSol, margin + 3, currentY + 8.2);
 
-    currentY += 13.5;
+    currentY += boxHeight + 2.2;
   });
 
   currentY += 2;
@@ -392,19 +406,19 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7.8);
   doc.setTextColor(30, 58, 138);
-  doc.text('⚖️ DERECHOS DEL RESIDENTE:', margin + 3, currentY + 5);
+  doc.text('DERECHOS DEL RESIDENTE:', margin + 3, currentY + 5.5);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6.8);
   doc.setTextColor(30, 64, 175);
   const rights = [
     '• Recibo digital inmediato por todo aporte abonado.',
-    '• Certificado de Ocupación para ANDE, ESSAP y trámites.',
+    '• Certificado de Ocupacion para ANDE, ESSAP y tramites.',
     '• Acceso al balance general de caja las 24 horas.',
     '• Voz y voto en las Asambleas Comunitarias.',
-    '• Respeto absoluto a su posesión pacífica y mejoras.',
+    '• Respeto absoluto a su posesion pacifica y mejoras.',
   ];
-  let ry = currentY + 9.5;
+  let ry = currentY + 10;
   rights.forEach((r) => {
     doc.text(r, margin + 3, ry);
     ry += 5.2;
@@ -419,7 +433,7 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7.8);
   doc.setTextColor(20, 83, 45);
-  doc.text('🤝 DEBERES DEL RESIDENTE:', margin + colWidth + 7, currentY + 5);
+  doc.text('DEBERES DEL RESIDENTE:', margin + colWidth + 7, currentY + 5.5);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6.8);
@@ -427,11 +441,11 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
   const duties = [
     '• Pago puntual de la cuota social comunal.',
     '• Asistencia a asambleas y reuniones vecinales.',
-    '• Participación activa en faenas y limpieza de calles.',
+    '• Participacion activa en faenas y limpieza de calles.',
     '• Respeto estricto a mojones y medidas del plano.',
-    '• Convivencia pacífica y respeto mutuo vecinal.',
+    '• Convivencia pacifica y respeto mutuo vecinal.',
   ];
-  let dy = currentY + 9.5;
+  let dy = currentY + 10;
   duties.forEach((d) => {
     doc.text(d, margin + colWidth + 7, dy);
     dy += 5.2;
@@ -440,28 +454,28 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
   currentY += 42;
 
   // ==========================================
-  // PAGE 4: PROTOCOLO DE TRASPASO, TESORERÍA, GLOSARIO & FIRMAS
+  // PAGE 4: PROTOCOLO DE TRASPASO, TESORERÍA, GLOSARIO & ASAMBLEAS
   // ==========================================
   doc.addPage();
   pageNumRef.current += 1;
   currentY = 20;
 
   // SECCIÓN 7: PROTOCOLO DE CESIÓN Y REUBICACIÓN
-  renderSectionHeader('7. PROTOCOLO OBLIGATORIO DE CESIÓN DE MEJORAS Y REUBICACIÓN');
+  renderSectionHeader('7. PROTOCOLO OBLIGATORIO DE CESION DE MEJORAS Y REUBICACION');
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.5);
   doc.setTextColor(51, 65, 85);
   doc.text(
-    'Queda prohibida la venta clandestina. Todo traspaso requiere comparecencia de ambas partes, inspección in situ, acta comunitaria en Libro de Actas, actualización en Sistema S16 y comunicación al INDERT.',
+    'Queda prohibida la venta clandestina. Todo traspaso requiere comparecencia de ambas partes, inspeccion in situ, acta comunitaria en Libro de Actas, actualizacion en Sistema S16 y comunicacion al INDERT.',
     margin,
     currentY,
     { maxWidth: contentWidth }
   );
-  currentY += 10;
+  currentY += 9;
 
   // SECCIÓN 8: RÉGIMEN DE TESORERÍA Y DOBLE FIRMA
-  renderSectionHeader('8. RÉGIMEN DE TESORERÍA, GASTOS Y RENDICIÓN DE CUENTAS');
+  renderSectionHeader('8. REGIMEN DE TESORERIA, GASTOS Y RENDICION DE CUENTAS');
 
   doc.setFillColor(254, 249, 195);
   doc.roundedRect(margin, currentY, contentWidth, 20, 2, 2, 'F');
@@ -471,15 +485,15 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7.5);
   doc.setTextColor(113, 63, 18);
-  doc.text('💰 DESTINO ESTRICTO DE LOS FONDOS COMUNALES:', margin + 3, currentY + 4.5);
+  doc.text('DESTINO ESTRICTO DE LOS FONDOS COMUNALES:', margin + 3, currentY + 4.5);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6.8);
   doc.setTextColor(133, 77, 14);
   const finPoints = [
-    '• Gastos de gestoría técnica, agrimensura, mensura judicial y honorarios aprobados en asamblea.',
-    '• Obras de infraestructura básica: cañerías de agua corriente, transformadores ANDE y motoniveladora.',
-    '• Todo retiro o gasto mayor requiere firma conjunta obligatoria de Presidencia y Tesorería.',
+    '• Gastos de gestoria tecnica, agrimensura, mensura judicial y honorarios aprobados en asamblea.',
+    '• Obras de infraestructura basica: cañerias de agua corriente, transformadores ANDE y motoniveladora.',
+    '• Todo retiro o gasto mayor requiere firma conjunta obligatoria de Presidencia y Tesoreria.',
   ];
   let fy = currentY + 8.5;
   finPoints.forEach((fp) => {
@@ -487,85 +501,89 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
     fy += 3.5;
   });
 
-  currentY += 24;
+  currentY += 23;
 
   // SECCIÓN 9: GLOSARIO AGRARIO RÁPIDO
-  renderSectionHeader('9. GLOSARIO DE TÉRMINOS AGRARIOS INDERT');
+  renderSectionHeader('9. GLOSARIO DE TERMINOS AGRARIOS INDERT');
 
   const terms = [
-    { t: 'Padrón Censal:', d: 'Lista jurada de familias ocupantes con acreditación de residencia efectiva y mejoras.' },
-    { t: 'Expediente Matriz:', d: 'Legajo radicado ante el INDERT donde se tramita la compra o expropiación del inmueble.' },
-    { t: 'Mensura Judicial:', d: 'Operación pericial y topográfica ordenada por un Juez para delimitar los linderos oficiales.' },
+    { t: 'Padron Censal:', d: 'Lista jurada de familias ocupantes con acreditacion de residencia efectiva y mejoras.' },
+    { t: 'Expediente Matriz:', d: 'Legajo radicado ante el INDERT donde se tramita la compra o expropiacion del inmueble.' },
+    { t: 'Mensura Judicial:', d: 'Operacion pericial y topografica ordenada por un Juez para delimitar los linderos oficiales.' },
   ];
 
   terms.forEach((tm) => {
+    const splitD = doc.splitTextToSize(tm.d, contentWidth - 6);
+    const itemHeight = 6.2 + splitD.length * 3.2;
+    checkPageBreak(itemHeight, pageNumRef);
+
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(7.2);
     doc.setTextColor(15, 23, 42);
-    doc.text(`• ${tm.t}`, margin + 2, currentY + 3);
+    doc.text(`• ${tm.t}`, margin + 2, currentY + 3.2);
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(6.8);
     doc.setTextColor(71, 85, 105);
-    doc.text(tm.d, margin + 30, currentY + 3);
-    currentY += 4.5;
+    doc.text(splitD, margin + 5, currentY + 6.6);
+    currentY += itemHeight;
   });
 
-  currentY += 4;
+  currentY += 2;
 
-  // ==========================================
-  // PAGE 5: ASAMBLEAS, CARNET DIGITAL, MARCO LEGAL & DESCARGO
-  // ==========================================
-  doc.addPage();
-  pageNumRef.current += 1;
-  currentY = 20;
-
-  // SECCIÓN 10: ASAMBLEAS GENERALES, CONTROL QR & ACTAS INDERT
+  // SECCIÓN 10: ASAMBLEAS GENERALES, CONTROL QR & ACTAS INDERT (EN PÁGINA 4 PARA EQUILIBRIO PERFECTO)
   renderSectionHeader('10. SISTEMA DE ASAMBLEAS SOBERANAS, CONTROL DE ASISTENCIA QR & ACTAS INDERT', [24, 119, 242]);
 
   const assemblyRules = [
     {
-      t: '1. Soberanía Asamblearia & Ley 1863/02:',
-      d: 'La Asamblea General es la máxima autoridad soberana del asentamiento. Toda decisión sobre cuotas, mensura y solicitudes al INDERT requiere deliberación y quorum fehaciente.',
+      t: '1. Soberania Asamblearia & Ley 1863/02:',
+      d: 'La Asamblea General es la maxima autoridad soberana. Toda decision sobre cuotas, mensura y solicitudes al INDERT requiere deliberacion y quorum fehaciente.',
     },
     {
-      t: '2. Valor Decisivo para Titulación INDERT:',
-      d: 'El INDERT exige acreditación de arraigo efectivo y vida comunitaria activa. Las actas de asistencia refrendadas constituyen la prueba medular requerida por los peritos para titular.',
+      t: '2. Valor Decisivo para Titulacion INDERT:',
+      d: 'El INDERT exige acreditacion de arraigo efectivo y vida comunitaria activa. Las actas de asistencia refrendadas constituyen la prueba medular requerida por los peritos para titular.',
     },
     {
-      t: '3. Acreditación QR & Representación:',
-      d: 'El registro se realiza con cámara activa al Carnet QR o C.I. Solo vota el titular o cónyuge censado (1 voto por lote). Queda prohibido votar por terceros o reunir poderes ajenos.',
+      t: '3. Acreditacion QR & Representacion:',
+      d: 'El registro se realiza con camara activa al Carnet QR o C.I. Solo vota el titular o conyuge censado (1 voto por lote). Queda prohibido votar por terceros o reunir poderes ajenos.',
     },
     {
       t: '4. Escala de Faltas e Inasistencias:',
-      d: '1 falta: alerta en portal vecinal. 2 faltas consecutivas: apercibimiento y suspensión temporal de voto. 3 faltas consecutivas (o 5 alternadas): pérdida de prioridad social e informe al INDERT.',
+      d: '1 falta: alerta en portal vecinal. 2 faltas consecutivas: apercibimiento y suspension temporal de voto. 3 faltas consecutivas (o 5 alternadas): perdida de prioridad social e informe al INDERT.',
     },
     {
-      t: '5. Justificación Perentoria (72 hs):',
-      d: 'Por enfermedad o motivo laboral justificado, el residente dispone de hasta 72 horas hábiles para presentar certificado médico o constancia a la Secretaría de Actas.',
+      t: '5. Justificacion Perentoria (72 hs):',
+      d: 'Por enfermedad o motivo laboral justificado, el residente dispone de hasta 72 horas habiles para presentar certificado medico o constancia a la Secretaria de Actas.',
     },
     {
       t: '6. Planilla Oficial en Excel (.xlsx):',
-      d: 'Al cerrar la asamblea, el sistema genera la nómina completa con orden por Manzana/Lote, cálculo de quorum y sellos de PRESENTE/FALTA para firma y elevación al INDERT.',
+      d: 'Al cerrar la asamblea, el sistema genera la nomina completa con orden por Manzana/Lote, calculo de quorum y sellos de PRESENTE/FALTA para firma y elevacion al INDERT.',
     },
   ];
 
   assemblyRules.forEach((ar) => {
-    checkPageBreak(8, pageNumRef);
+    const splitAr = doc.splitTextToSize(ar.d, contentWidth - 6);
+    const itemHeight = 6.2 + splitAr.length * 3.2;
+    checkPageBreak(itemHeight, pageNumRef);
+
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(7.2);
     doc.setTextColor(15, 23, 42);
-    doc.text(`• ${ar.t}`, margin + 2, currentY + 3);
+    doc.text(`• ${ar.t}`, margin + 2, currentY + 3.2);
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(6.8);
     doc.setTextColor(71, 85, 105);
-    const splitAr = doc.splitTextToSize(ar.d, contentWidth - 45);
-    doc.text(splitAr, margin + 42, currentY + 3);
-    currentY += 6.5;
+    doc.text(splitAr, margin + 5, currentY + 6.6);
+    currentY += itemHeight;
   });
 
-  currentY += 3;
+  // ==========================================
+  // PAGE 5: CARNET DIGITAL, DESCARGO, TÉRMINOS Y CONDICIONES & FIRMAS
+  // ==========================================
+  doc.addPage();
+  pageNumRef.current += 1;
+  currentY = 20;
 
   // SECCIÓN 11: CARNET DIGITAL DEL VECINO, HUSO OFICIAL PARAGUAY & NUBE
   renderSectionHeader('11. CARNET DIGITAL DEL VECINO, HORARIO OFICIAL PARAGUAY & RESPALDO EN NUBE', [13, 148, 136]);
@@ -573,64 +591,69 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
   const digitalPillars = [
     {
       t: '1. Carnet Digital Personalizado:',
-      d: 'Credencial accesible en "Mi Cuenta" con Código QR único, linderos y estado de aportes, apto para gestiones ante ANDE, ESSAP e INDERT.',
+      d: 'Credencial accesible en "Mi Cuenta" con Codigo QR unico, linderos y estado de aportes, apto para gestiones ante ANDE, ESSAP e INDERT.',
     },
     {
       t: '2. Hora Legal de Paraguay:',
-      d: 'Operación bajo huso oficial (America/Asuncion, UTC-4 / UTC-3), sincronizando recibos, transferencias SIPAP/Billeteras y actas sin desfase.',
+      d: 'Operacion bajo huso oficial (America/Asuncion, UTC-4 / UTC-3), sincronizando recibos, transferencias SIPAP/Billeteras y actas sin desfase.',
     },
     {
       t: '3. Nube Firestore & Libro Abierto:',
-      d: 'Respaldo automático en Google Cloud Firestore. Transparencia total donde cada vecino puede auditar balances y legajos las 24 horas.',
+      d: 'Respaldo automatico en Google Cloud Firestore. Transparencia total donde cada vecino puede auditar balances y legajos las 24 horas.',
     },
     {
       t: '4. Reubicaciones Inmutables:',
-      d: 'Registro perpetuo con resolución asamblearia y causa justificada (apertura vial/mensura), impidiendo ventas fraudulentas o dobles loteos.',
+      d: 'Registro perpetuo con resolucion asamblearia y causa justificada (apertura vial/mensura), impidiendo ventas fraudulentas o dobles loteos.',
     },
   ];
 
   digitalPillars.forEach((dp) => {
-    checkPageBreak(8, pageNumRef);
+    const splitDp = doc.splitTextToSize(dp.d, contentWidth - 6);
+    const itemHeight = 6.2 + splitDp.length * 3.2;
+    checkPageBreak(itemHeight, pageNumRef);
+
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(7.2);
     doc.setTextColor(15, 23, 42);
-    doc.text(`• ${dp.t}`, margin + 2, currentY + 3);
+    doc.text(`• ${dp.t}`, margin + 2, currentY + 3.2);
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(6.8);
     doc.setTextColor(71, 85, 105);
-    const splitDp = doc.splitTextToSize(dp.d, contentWidth - 45);
-    doc.text(splitDp, margin + 42, currentY + 3);
-    currentY += 6.5;
+    doc.text(splitDp, margin + 5, currentY + 6.6);
+    currentY += itemHeight;
   });
 
-  currentY += 4;
+  currentY += 2;
 
   // SECCIÓN 12: DESCARGO NO GUBERNAMENTAL & USO INTERNO
   renderSectionHeader('12. DESCARGO LEGAL: HERRAMIENTA PRIVADA DE USO INTERNO VECINAL', [220, 38, 38]);
 
+  const disclaimerPdfText =
+    'El Sistema Digital S16 / ComunidApp es una herramienta tecnologica privada de autogestion vecinal desarrollada para uso interno de la Comision Vecinal Pro-Tierra. NO constituye una plataforma oficial del INDERT, MUVH, Catastro ni del Estado Paraguayo. Las constancias emitidas tienen alcance gremial y probatorio de posesion pacifica, no sustituyendo titulos definitivos de propiedad publica.';
+  const splitDisclaimer = doc.splitTextToSize(disclaimerPdfText, contentWidth - 6);
+  const boxDisclaimerHeight = 7.5 + splitDisclaimer.length * 3.3;
+  checkPageBreak(boxDisclaimerHeight + 2, pageNumRef);
+
   doc.setFillColor(254, 242, 242);
-  doc.roundedRect(margin, currentY, contentWidth, 24, 2, 2, 'F');
+  doc.roundedRect(margin, currentY, contentWidth, boxDisclaimerHeight, 2, 2, 'F');
   doc.setDrawColor(254, 202, 202);
-  doc.roundedRect(margin, currentY, contentWidth, 24, 2, 2, 'D');
+  doc.roundedRect(margin, currentY, contentWidth, boxDisclaimerHeight, 2, 2, 'D');
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7.5);
   doc.setTextColor(153, 27, 27);
-  doc.text('⚠️ DECLARACIÓN EXPRESA DE NO FILIACIÓN GUBERNAMENTAL:', margin + 3, currentY + 4.5);
+  doc.text('DECLARACION EXPRESA DE NO FILIACION GUBERNAMENTAL:', margin + 3, currentY + 4.5);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6.8);
   doc.setTextColor(127, 29, 29);
-  const disclaimerPdfText =
-    'El Sistema Digital S16 / ComunidApp es una herramienta tecnológica privada de autogestión vecinal desarrollada para uso interno de la Comisión Vecinal Pro-Tierra. NO constituye una plataforma oficial del INDERT, MUVH, Catastro ni del Estado Paraguayo. Las constancias emitidas tienen alcance gremial y probatorio de posesión pacífica, no sustituyendo títulos definitivos de propiedad pública.';
-  const splitDisclaimer = doc.splitTextToSize(disclaimerPdfText, contentWidth - 6);
-  doc.text(splitDisclaimer, margin + 3, currentY + 8.5);
+  doc.text(splitDisclaimer, margin + 3, currentY + 8.2);
 
-  currentY += 28;
+  currentY += boxDisclaimerHeight + 3;
 
   // SECCIÓN 13: TÉRMINOS Y CONDICIONES & POLÍTICAS DE PRIVACIDAD
-  renderSectionHeader('13. TÉRMINOS Y CONDICIONES DEL PADRÓN & PRIVACIDAD (LEY 1682/01 Y LEY 6534/20)');
+  renderSectionHeader('13. TERMINOS Y CONDICIONES DEL PADRON & PRIVACIDAD (LEY 1682/01 Y LEY 6534/20)');
 
   const legalClauses = [
     {
@@ -638,48 +661,50 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
       d: 'Todo postulante y censado declara bajo fe de juramento la veracidad de su identidad y residencia efectiva.',
     },
     {
-      t: '2. Prohibición de Especulación:',
-      d: 'Queda estrictamente prohibida la venta, cesión o subarriendo informal de lotes con fines lucrativos.',
+      t: '2. Prohibicion de Especulacion:',
+      d: 'Queda estrictamente prohibida la venta, cesion o subarriendo informal de lotes con fines lucrativos.',
     },
     {
       t: '3. Transparencia & Caja Abierta:',
-      d: 'Todo aporte cuenta con recibo digital numerado inalterable y el balance financiero está disponible públicamente.',
+      d: 'Todo aporte cuenta con recibo digital numerado inalterable y el balance financiero esta disponible publicamente.',
     },
     {
-      t: '4. Protección de Datos (ARCO):',
-      d: 'Los datos personales (C.I., teléfonos, grupo familiar) son de uso censal exclusivo y JAMÁS serán comercializados a terceros.',
+      t: '4. Proteccion de Datos (ARCO):',
+      d: 'Los datos personales (C.I., telefonos, grupo familiar) son de uso censal exclusivo y JAMAS seran comercializados a terceros.',
     },
     {
-      t: '5. Normas de Asignación (Ley 1863/02):',
-      d: '18 años de edad, carencia absoluta de otros inmuebles inscriptos a nombre del solicitante o cónyuge y destino exclusivo para vivienda familiar.',
+      t: '5. Normas de Asignacion (Ley 1863/02):',
+      d: '18 años de edad, carencia absoluta de otros inmuebles inscriptos a nombre del solicitante o conyuge y destino exclusivo para vivienda familiar.',
     },
     {
       t: '6. Escala de Prioridades Sociales:',
-      d: '1) Madres solteras cabezas de hogar y niños, 2) Discapacidad (SENADIS) o enfermedad crónica, 3) Adultos mayores desamparados, 4) Familias jóvenes sin casa.',
+      d: '1) Madres solteras cabezas de hogar y niños, 2) Discapacidad (SENADIS) o enfermedad cronica, 3) Adultos mayores desamparados, 4) Familias jovenes sin casa.',
     },
     {
-      t: '7. Plazo Perentorio de Ocupación (30-60 ds):',
-      d: 'Obligación de residir e instalar mejoras habitables en 30-60 días corridos. Prohibición de maleza/abandono. Máximo un lote por núcleo familiar.',
+      t: '7. Plazo Perentorio de Ocupacion (30-60 ds):',
+      d: 'Obligacion de residir e instalar mejoras habitables en 30-60 dias corridos. Prohibicion de maleza/abandono. Maximo un lote por nucleo familiar.',
     },
     {
-      t: '8. Revocación Inmediata de Lote:',
-      d: 'Abandono mayor a 90 días, reventa clandestina, falsedad jurada o acumulación de 3 faltas consecutivas o 5 alternadas a asambleas sin justificación médica.',
+      t: '8. Revocacion Inmediata de Lote:',
+      d: 'Abandono mayor a 90 dias, reventa clandestina, falsedad jurada o acumulacion de 3 faltas consecutivas o 5 alternadas a asambleas sin justificacion medica.',
     },
   ];
 
   legalClauses.forEach((c) => {
-    checkPageBreak(8, pageNumRef);
+    const splitC = doc.splitTextToSize(c.d, contentWidth - 6);
+    const itemHeight = 6.2 + splitC.length * 3.2;
+    checkPageBreak(itemHeight, pageNumRef);
+
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(7.2);
     doc.setTextColor(15, 23, 42);
-    doc.text(`• ${c.t}`, margin + 2, currentY + 3);
+    doc.text(`• ${c.t}`, margin + 2, currentY + 3.2);
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(6.8);
     doc.setTextColor(71, 85, 105);
-    const splitC = doc.splitTextToSize(c.d, contentWidth - 45);
-    doc.text(splitC, margin + 42, currentY + 3);
-    currentY += 6.5;
+    doc.text(splitC, margin + 5, currentY + 6.6);
+    currentY += itemHeight;
   });
 
   currentY += 4;
