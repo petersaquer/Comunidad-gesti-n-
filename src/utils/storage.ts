@@ -82,7 +82,7 @@ export const getInitialAppState = () => {
 
   let currentUser = loadData<UserAccount | null>(
     STORAGE_KEYS.CURRENT_USER,
-    defaultAdmin
+    null
   );
 
   if (currentUser) {
@@ -91,8 +91,6 @@ export const getInitialAppState = () => {
     if (matchingUser) {
       currentUser = matchingUser;
     }
-  } else {
-    currentUser = defaultAdmin;
   }
 
   return {
