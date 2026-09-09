@@ -4,6 +4,7 @@ import { Resident, Contribution, ContributionCategory, PaymentStatus, CommunityS
 import { isAdministrativeUser } from '../utils/privacyUtils';
 import { ResidentSearchSelect } from './ResidentSearchSelect';
 import { formatGuaranies } from '../utils/currency';
+import { getParaguayCurrentMonth, getParaguayTodayISO } from '../utils/paraguayDate';
 
 interface ContributionModalProps {
   isOpen: boolean;
@@ -29,8 +30,8 @@ export const ContributionModal: React.FC<ContributionModalProps> = ({
   const isAdmin = isAdministrativeUser(currentUser);
   const canManageFinances = isAdmin || currentUser?.permissions?.canManageFinances;
 
-  const currentMonth = new Date().toISOString().substring(0, 7); // YYYY-MM
-  const today = new Date().toISOString().split('T')[0];
+  const currentMonth = getParaguayCurrentMonth(); // YYYY-MM
+  const today = getParaguayTodayISO();
 
   const [formData, setFormData] = useState<Partial<Contribution>>({
     residentId: '',

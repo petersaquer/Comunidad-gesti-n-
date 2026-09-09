@@ -35,6 +35,7 @@ import {
   saveAllAppState,
   resetToDemoData,
 } from './utils/storage';
+import { formatParaguayDate, getParaguayTodayISO } from './utils/paraguayDate';
 import {
   fetchStateFromFirebase,
   syncStateToFirebase,
@@ -152,6 +153,10 @@ export default function App() {
         setAppState((prev) => ({
           ...prev,
           ...sqliteData,
+          settings:
+            sqliteData.settings && Object.keys(sqliteData.settings).length > 0
+              ? { ...prev.settings, ...sqliteData.settings }
+              : prev.settings,
           currentUser: prev.currentUser, // preserve session
         }));
       }
@@ -500,9 +505,9 @@ export default function App() {
       status: 'aprobado',
       assignedBlock,
       assignedLot,
-      reviewedAt: new Date().toISOString().split('T')[0],
+      reviewedAt: getParaguayTodayISO(),
       reviewedBy: settings.presidentName,
-      decisionNotes: `Aprobado y adjudicado en Manzana ${assignedBlock}, Lote ${assignedLot} en fecha ${new Date().toLocaleDateString('es-PY')}.`,
+      decisionNotes: `Aprobado y adjudicado en Manzana ${assignedBlock}, Lote ${assignedLot} en fecha ${formatParaguayDate()}.`,
     };
     handleSaveLandRequest(approvedRequest, true);
   };
@@ -1410,6 +1415,7 @@ export default function App() {
             contributions={contributions}
             shifts={shifts}
             documents={indertDocs}
+            meetings={appState.meetings}
             settings={settings}
             onOpenNewContribution={(resId) => {
               setTargetResidentForContribution(resId);

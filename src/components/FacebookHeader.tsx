@@ -40,6 +40,7 @@ import {
 
 import { S16Logo } from './S16Logo';
 import { UserBadge } from './UserBadge';
+import { formatParaguayDate, formatParaguayTime } from '../utils/paraguayDate';
 
 interface FacebookHeaderProps {
   activeTab: string;
@@ -107,6 +108,15 @@ export const FacebookHeader: React.FC<FacebookHeaderProps> = ({
   const canManageIndertDocs = isAdmin || currentUser?.permissions?.canManageIndertDocs;
   const canManageLandRequests = isAdmin || currentUser?.permissions?.canManageLandRequests;
   const canManageShifts = isAdmin || currentUser?.permissions?.canManageShifts;
+
+  const [pyTime, setPyTime] = useState(() => formatParaguayTime());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPyTime(formatParaguayTime());
+    }, 15000);
+    return () => clearInterval(timer);
+  }, []);
 
   const createMenuRef = useRef<HTMLDivElement>(null);
   const notifMenuRef = useRef<HTMLDivElement>(null);
@@ -321,6 +331,12 @@ export const FacebookHeader: React.FC<FacebookHeaderProps> = ({
 
           {/* Right Controls: Create (+), Community Guide, Notifications, User Profile */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            {/* Live Paraguay Date & Time Indicator */}
+            <div className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/15 text-white text-xs font-semibold border border-white/20 shadow-xs select-none" title="Hora Oficial de la República del Paraguay (America/Asuncion)">
+              <Clock className="w-3.5 h-3.5 text-blue-200" />
+              <span>{formatParaguayDate()} • {pyTime}</span>
+            </div>
+
             {/* Community Guide PDF Button (Visible to everyone) */}
             {onOpenCommunityGuideModal && (
               <button

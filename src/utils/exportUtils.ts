@@ -10,6 +10,7 @@ import {
 } from '../types';
 import { formatGuaranies } from './currency';
 import { maskDocumentId, maskPhoneNumber, canViewSensitiveResidentData } from './privacyUtils';
+import { formatParaguayDate, formatParaguayDateTime } from './paraguayDate';
 
 // Export to Excel: Balance Financiero Mensual
 export const exportFinancialBalanceToExcel = (
@@ -33,7 +34,7 @@ export const exportFinancialBalanceToExcel = (
     ['Comunidad:', settings.communityName],
     ['Ubicación:', settings.settlementLocation],
     ['Mes reportado:', month],
-    ['Generado el:', new Date().toLocaleString()],
+    ['Generado el:', formatParaguayDateTime()],
     ['Presidente:', settings.presidentName],
     ['Tesorero/a:', settings.treasurerName],
     [''],
@@ -174,7 +175,7 @@ export const exportFinancialBalanceToPDF = (
   doc.setFont('helvetica', 'normal');
   doc.text(`Ubicación: ${settings.settlementLocation}`, 14, 26);
   doc.text(`Balance Financiero Oficial - Período: ${month}`, 14, 32);
-  doc.text(`Fecha de Emisión: ${new Date().toLocaleDateString()}`, 14, 38);
+  doc.text(`Fecha de Emisión: ${formatParaguayDate()}`, 14, 38);
 
   // Line divider
   doc.setDrawColor(200, 200, 200);
@@ -309,7 +310,7 @@ export const exportResidentAccountStatementToPDF = (
 
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Fecha de emisión: ${new Date().toLocaleDateString()}`, 14, 31);
+  doc.text(`Fecha de emisión: ${formatParaguayDate()}`, 14, 31);
 
   doc.line(14, 34, 196, 34);
 

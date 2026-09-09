@@ -26,6 +26,7 @@ import {
 } from '../types';
 import { DocumentPhotoUploader } from './DocumentPhotoUploader';
 import { openWhatsApp } from '../utils/notificationUtils';
+import { formatParaguayDate, getParaguayTodayISO } from '../utils/paraguayDate';
 
 interface LandRequestModalProps {
   isOpen: boolean;
@@ -152,7 +153,7 @@ export const LandRequestModal: React.FC<LandRequestModalProps> = ({
         if (!assignedB) assignedB = prev.requestedBlock || 'A';
         if (!assignedL) assignedL = prev.requestedLot || '';
         if (!defaultDecision) {
-          defaultDecision = `Aprobado por la Comisión Vecinal de Tierras en fecha ${new Date().toLocaleDateString('es-PY')}. Cumple con criterios del INDERT.`;
+          defaultDecision = `Aprobado por la Comisión Vecinal de Tierras en fecha ${formatParaguayDate()}. Cumple con criterios del INDERT.`;
         }
       } else if (newStatus === 'denegado' && !defaultDecision) {
         defaultDecision = 'Solicitud denegada: no cumple con el requisito de no poseer otros inmuebles o por falta de disponibilidad de parcelas.';

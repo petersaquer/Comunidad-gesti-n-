@@ -26,6 +26,9 @@ import {
   ClipboardList,
   Home,
   CheckCircle,
+  QrCode,
+  Calendar,
+  Cloud,
 } from 'lucide-react';
 import { CommunitySettings } from '../types';
 import { downloadCommunityGuidePdf } from '../utils/communityDocPdfGenerator';
@@ -45,6 +48,8 @@ type GuideTabType =
   | 'transfers'
   | 'treasury'
   | 'steps'
+  | 'meetings_qr'
+  | 'digital_id_time'
   | 'disclaimer_terms';
 
 export const CommunityGuideModal: React.FC<CommunityGuideModalProps> = ({
@@ -233,6 +238,30 @@ export const CommunityGuideModal: React.FC<CommunityGuideModalProps> = ({
           </button>
 
           <button
+            onClick={() => setActiveTab('meetings_qr')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+              activeTab === 'meetings_qr'
+                ? 'bg-blue-50 text-[#1877F2] shadow-xs border border-blue-300 ring-1 ring-blue-400/30'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+            }`}
+          >
+            <QrCode className="w-3.5 h-3.5 text-[#1877F2]" />
+            <span className="font-extrabold">9. Asambleas & Control QR</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('digital_id_time')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+              activeTab === 'digital_id_time'
+                ? 'bg-teal-50 text-teal-800 shadow-xs border border-teal-300 ring-1 ring-teal-400/30'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+            }`}
+          >
+            <Clock className="w-3.5 h-3.5 text-teal-700" />
+            <span className="font-extrabold">10. Carnet Digital & Horario Oficial</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('disclaimer_terms')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all cursor-pointer shrink-0 ${
               activeTab === 'disclaimer_terms'
@@ -241,7 +270,7 @@ export const CommunityGuideModal: React.FC<CommunityGuideModalProps> = ({
             }`}
           >
             <Scale className="w-3.5 h-3.5 text-amber-700" />
-            <span className="font-extrabold">9. Descargo Legal, Términos & Privacidad</span>
+            <span className="font-extrabold">11. Descargo Legal, Términos & Privacidad</span>
           </button>
         </div>
 
@@ -1043,7 +1072,231 @@ export const CommunityGuideModal: React.FC<CommunityGuideModalProps> = ({
             </div>
           )}
 
-          {/* TAB 9: DESCARGO LEGAL, TÉRMINOS & POLÍTICAS DE PRIVACIDAD */}
+          {/* TAB 9: ASAMBLEAS VECINALES & CONTROL DE ASISTENCIA QR EN VIVO */}
+          {activeTab === 'meetings_qr' && (
+            <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-150">
+              
+              {/* Header Box */}
+              <div className="p-3.5 sm:p-4 rounded-xl bg-blue-50/80 border border-blue-200 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-[#1877F2] text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <QrCode className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-xs sm:text-sm font-extrabold text-blue-950">
+                    Sistema de Asambleas Soberanas & Control Biométrico / QR de Asistencia
+                  </h3>
+                  <p className="text-[11px] sm:text-xs text-blue-900/90 leading-relaxed mt-1">
+                    La Asamblea General de Pobladores es la <strong>máxima autoridad democrática de la comunidad</strong> (Estatuto Agrario Ley 1863/02 y Ley 2419/04). Para otorgar validez jurídica a las decisiones comunales ante el INDERT, la asistencia debe ser verificable, transparente y documentada de forma fehaciente.
+                  </p>
+                </div>
+              </div>
+
+              {/* Grid: 4 Pasos del Proceso de Asambleas */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-2">
+                  <div className="flex items-center gap-2 text-slate-900 font-bold text-xs sm:text-sm">
+                    <span className="w-6 h-6 rounded-full bg-blue-100 text-[#1877F2] font-black text-xs flex items-center justify-center">1</span>
+                    <span>Convocatoria Formal Vía WhatsApp</span>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    La Secretaría emite la citación oficial estandarizada con fecha, hora oficial paraguaya, lugar del asentamiento, orden del día estricto e indicación de asistencia obligatoria portando el Carnet Digital con Código QR.
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-2">
+                  <div className="flex items-center gap-2 text-slate-900 font-bold text-xs sm:text-sm">
+                    <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-black text-xs flex items-center justify-center">2</span>
+                    <span>Escaneo de Asistencia en Tiempo Real</span>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    En la mesa de entrada de la asamblea, la Secretaría de Actas o los Delegados de Manzana activan el <strong>escáner con cámara en vivo</strong>. Al apuntar al QR del vecino, el sistema valida en segundos la identidad, manzana y lote, computando la asistencia con estampa horaria paraguaya.
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-2">
+                  <div className="flex items-center gap-2 text-slate-900 font-bold text-xs sm:text-sm">
+                    <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 font-black text-xs flex items-center justify-center">3</span>
+                    <span>Actas Censales Homologadas en Excel</span>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Con un solo clic se genera la <strong>Planilla Oficial en Formato Excel (.xlsx)</strong> con encabezado institucional, ordenamiento por Manzana y Lote, distinción clara de <em>PRESENTE</em> o <em>AUSENTE (FALTA)</em>, cálculo de quorum y espacio para firmas de la Mesa Directiva.
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-2">
+                  <div className="flex items-center gap-2 text-slate-900 font-bold text-xs sm:text-sm">
+                    <span className="w-6 h-6 rounded-full bg-rose-100 text-rose-700 font-black text-xs flex items-center justify-center">4</span>
+                    <span>Régimen de Faltas e Inasistencias</span>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    El sistema descuenta automáticamente las inasistencias en el legajo del residente. Acumular 3 o más faltas consecutivas injustificadas debilita la prioridad social ante la Asamblea General y el INDERT para la adjudicación definitiva del lote.
+                  </p>
+                </div>
+              </div>
+
+              {/* Protocol Details Callout */}
+              <div className="p-4 rounded-xl bg-amber-500/10 border-2 border-amber-400/80 space-y-3">
+                <div className="flex items-start gap-2.5">
+                  <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-xs sm:text-sm font-black text-amber-950 uppercase tracking-wide">
+                      ¿Por qué la Asistencia a Asambleas es Decisiva para tu Título de Propiedad del INDERT?
+                    </h4>
+                    <p className="text-[11px] sm:text-xs text-amber-950/90 leading-relaxed mt-1">
+                      Conforme al <strong>Estatuto Agrario (Ley N° 1863/02)</strong> y la reglamentación del <strong>INDERT</strong>, la adjudicación de tierras públicas no es un simple trámite administrativo: <strong>exige demostrar arraigo efectivo, posesión pacífica y participación activa en el desarrollo comunitario</strong>. Las planillas de asistencia y actas de asamblea refrendadas son el medio probatorio fundamental que los inspectores y peritos del INDERT exigen a la Comisión Vecinal para certificar que el solicitante realmente vive en la comunidad y no es un especulador.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Consecuencias Graduales de las Inasistencias */}
+              <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-3">
+                <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                  <ShieldAlert className="w-4 h-4 text-rose-600" />
+                  <span>Régimen Disciplinario: Escala de Consecuencias por Inasistencia</span>
+                </h4>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 text-[11px]">
+                  <div className="p-3 rounded-xl bg-amber-50/60 border border-amber-200 space-y-1">
+                    <span className="font-black text-amber-900 block text-xs">⚠️ 1 Falta Injustificada</span>
+                    <p className="text-slate-600 leading-snug">
+                      Alerta preventiva automática en el portal vecinal <em>"Mi Cuenta / Mi Lote"</em>. Se notifica al residente para que regularice su justificación ante la Secretaría.
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-orange-50/70 border border-orange-200 space-y-1">
+                    <span className="font-black text-orange-900 block text-xs">⚠️ 2 Faltas Consecutivas</span>
+                    <p className="text-slate-600 leading-snug">
+                      Apercibimiento formal por el Delegado de Manzana. Pérdida temporal del derecho a voz y voto en la siguiente asamblea deliberativa.
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-rose-50/80 border border-rose-300 space-y-1">
+                    <span className="font-black text-rose-900 block text-xs">🚫 3 Faltas Consecutivas (o 5 en el año)</span>
+                    <p className="text-slate-600 leading-snug">
+                      <strong>Pérdida de prioridad social</strong> para adjudicación del lote. Presunción de falta de arraigo. La Comisión queda facultada para inspección in situ y remitir informe al INDERT para eventual reasignación a familias con necesidad real.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Reglas de Acreditación y Justificación */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs text-slate-700">
+                
+                {/* Box A: Quién puede acreditarse */}
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                  <span className="font-bold text-slate-900 block uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                    <UserCheck className="w-3.5 h-3.5 text-blue-600" />
+                    ¿Quién Puede Representar al Lote en la Asamblea?
+                  </span>
+                  <ul className="space-y-1.5 list-disc list-inside text-[11px]">
+                    <li><strong>Titular Censado:</strong> Es el responsable primario de concurrir con su Carnet QR o Cédula física.</li>
+                    <li><strong>Cónyuge o Pareja Acreditada:</strong> Puede votar con pleno derecho si figura debidamente en la ficha familiar del censo.</li>
+                    <li><strong>Hijo/a Mayor de Edad:</strong> Solo en caso excepcional con autorización escrita y firmada por el titular, exhibiendo su C.I.</li>
+                    <li><strong>Prohibición de Poderes Múltiples:</strong> Ningún vecino puede representar a más de un lote ni traer carnets ajenos. Un lote equivale a un solo voto.</li>
+                  </ul>
+                </div>
+
+                {/* Box B: Justificación de inasistencias */}
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                  <span className="font-bold text-slate-900 block uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                    <ClipboardList className="w-3.5 h-3.5 text-emerald-600" />
+                    Protocolo de Justificación de Faltas
+                  </span>
+                  <ul className="space-y-1.5 list-disc list-inside text-[11px]">
+                    <li><strong>Plazo Máximo:</strong> Hasta <strong>72 horas hábiles</strong> posteriores a la asamblea ante la Secretaría de Actas.</li>
+                    <li><strong>Causales Válidas:</strong> Certificado médico de reposo expedido por centro de salud, constancia laboral de turno u orden de trabajo en otra localidad, o fuerza mayor manifiesta.</li>
+                    <li><strong>Registro en el Sistema:</strong> La Secretaría asienta la justificación, reflejándose en el acta oficial con el estado <em>"Ausente con Justificativo"</em>, sin penalización en el legajo del INDERT.</li>
+                    <li><strong>Auditoría en "Mi Cuenta":</strong> El vecino puede verificar en su pantalla que la falta fue debidamente justificada.</li>
+                  </ul>
+                </div>
+
+              </div>
+
+            </div>
+          )}
+
+          {/* TAB 10: CARNET DIGITAL DEL RESIDENTE, HORARIO OFICIAL & NUBE */}
+          {activeTab === 'digital_id_time' && (
+            <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-150">
+              
+              {/* Header Box */}
+              <div className="p-3.5 sm:p-4 rounded-xl bg-teal-50/80 border border-teal-200 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <Clock className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-xs sm:text-sm font-extrabold text-teal-950">
+                    Carnet Digital del Vecino, Horario Oficial de Paraguay & Nube Segura
+                  </h3>
+                  <p className="text-[11px] sm:text-xs text-teal-900/90 leading-relaxed mt-1">
+                    Modernización tecnológica al servicio de la soberanía comunitaria: cada vecino dispone de su credencial digital, la plataforma opera bajo la hora legal de la República del Paraguay y los datos se resguardan de forma inmutable en la nube.
+                  </p>
+                </div>
+              </div>
+
+              {/* 3 Pillars */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                
+                {/* Pillar 1: Carnet Digital */}
+                <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-2.5">
+                  <div className="flex items-center gap-2 text-teal-900 font-bold text-xs sm:text-sm">
+                    <UserCheck className="w-4 h-4 text-teal-600 shrink-0" />
+                    <span>Carnet Digital con QR</span>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Disponible las 24 horas en la sección <strong>"Mi Cuenta / Mi Lote"</strong>. Muestra el nombre del titular, Cédula de Identidad protegida, Manzana, Lote, estado de linderos amojonados y un Código QR individual para trámites comunales y asambleas.
+                  </p>
+                  <span className="text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md inline-block">
+                    Inviolable e Intransferible
+                  </span>
+                </div>
+
+                {/* Pillar 2: Horario Oficial */}
+                <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-2.5">
+                  <div className="flex items-center gap-2 text-blue-900 font-bold text-xs sm:text-sm">
+                    <Clock className="w-4 h-4 text-[#1877F2] shrink-0" />
+                    <span>Hora Oficial de Paraguay</span>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Sincronización estricta con el huso oficial de Paraguay (<code>America/Asuncion</code>, UTC-4 / UTC-3). Evita desfasajes en recibos de dinero, transferencias bancarias (SIPAP / Billeteras) y actas de asamblea emitidas ante instituciones públicas.
+                  </p>
+                  <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md inline-block">
+                    Reloj en Vivo en la Barra
+                  </span>
+                </div>
+
+                {/* Pillar 3: Persistencia en la Nube */}
+                <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-2.5">
+                  <div className="flex items-center gap-2 text-indigo-900 font-bold text-xs sm:text-sm">
+                    <Cloud className="w-4 h-4 text-indigo-600 shrink-0" />
+                    <span>Nube Google Firestore</span>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Toda la información del censo, aportes de tesorería y expedientes se almacena de forma segura en Google Cloud Firestore. Esto garantiza que ningún dato se pierda por rotura o extravío de computadoras o teléfonos de la directiva.
+                  </p>
+                  <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md inline-block">
+                    Respaldo Seguro 24/7
+                  </span>
+                </div>
+
+              </div>
+
+              {/* Reubicaciones y Transparencia */}
+              <div className="p-3.5 sm:p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                <span className="font-bold text-slate-900 block text-xs flex items-center gap-1.5">
+                  <ArrowRightLeft className="w-3.5 h-3.5 text-amber-600" />
+                  Registro Histórico Inmutable de Reubicaciones de Terreno:
+                </span>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Para blindar a la comunidad contra ventas ilegales o dobles asignaciones, cualquier cambio de parcela (por trazado topográfico de calles, cesión consentida o fuerza mayor) queda asentado en un registro histórico permanente con Manzana Anterior, Manzana Nueva, fecha oficial paraguaya, motivo documentado y número de resolución del Comité.
+                </p>
+              </div>
+
+            </div>
+          )}
+
+          {/* TAB 11: DESCARGO LEGAL, TÉRMINOS & POLÍTICAS DE PRIVACIDAD */}
           {activeTab === 'disclaimer_terms' && (
             <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-150">
               

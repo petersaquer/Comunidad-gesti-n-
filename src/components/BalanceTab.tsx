@@ -16,6 +16,7 @@ import {
 import { Contribution, Expense, Resident, CommunitySettings } from '../types';
 import { exportFinancialBalanceToExcel, exportFinancialBalanceToPDF } from '../utils/exportUtils';
 import { formatGuaranies } from '../utils/currency';
+import { getParaguayCurrentMonth } from '../utils/paraguayDate';
 
 interface BalanceTabProps {
   contributions: Contribution[];
@@ -36,7 +37,7 @@ export const BalanceTab: React.FC<BalanceTabProps> = ({
     contributions.forEach((c) => c.month && set.add(c.month));
     expenses.forEach((e) => e.month && set.add(e.month));
     // Default current month if empty
-    const current = new Date().toISOString().substring(0, 7);
+    const current = getParaguayCurrentMonth();
     set.add(current);
     return Array.from(set).sort().reverse();
   }, [contributions, expenses]);

@@ -26,11 +26,14 @@ import {
   MaintenanceShift,
   IndertDocument,
   CommunitySettings,
+  Meeting,
 } from '../types';
+import { QRCodeSVG } from 'qrcode.react';
 import { downloadResidentCertificate, downloadIndertDocument } from '../utils/fileDownloader';
 import { ResidentCarnetModal } from "./ResidentCarnetModal";
 import { downloadCommunityGuidePdf } from '../utils/communityDocPdfGenerator';
 import { formatGuaranies } from '../utils/currency';
+import { formatParaguayDate, formatParaguayTime } from '../utils/paraguayDate';
 import { Heart, Accessibility, FileCheck, Eye, X, BookOpen, ShieldAlert } from 'lucide-react';
 
 interface ResidentPortalViewProps {
@@ -39,6 +42,7 @@ interface ResidentPortalViewProps {
   contributions: Contribution[];
   shifts: MaintenanceShift[];
   documents: IndertDocument[];
+  meetings: Meeting[];
   settings: CommunitySettings;
   onOpenNewContribution: (residentId: string) => void;
   onOpenNewDoc: () => void;
@@ -55,6 +59,7 @@ export const ResidentPortalView: React.FC<ResidentPortalViewProps> = ({
   contributions,
   shifts,
   documents,
+  meetings,
   settings,
   onOpenNewContribution,
   onOpenNewDoc,
@@ -65,6 +70,19 @@ export const ResidentPortalView: React.FC<ResidentPortalViewProps> = ({
   onOpenLegalTermsModal,
 }) => {
   const [isCarnetOpen, setIsCarnetOpen] = useState(false);
+
+  // Attendance Calculations
+  const completedMeetings = meetings.filter(m => m.status === 'completed');
+  
+  const qrId = resident?.id || currentUser.documentId || currentUser.id;
+  const qrDisplayId = resident?.documentId || currentUser.documentId || 'ADMIN';
+  
+  const attendedMeetingsCount = completedMeetings.filter(m => 
+    m.attendees.includes(qrId) || m.attendees.includes(qrDisplayId)
+  ).length;
+  
+  const missedMeetingsCount = completedMeetings.length - attendedMeetingsCount;
+
   // Filter resident contributions
   const residentContributions = resident
     ? contributions.filter((c) => c.residentId === resident.id)
@@ -184,6 +202,83 @@ export const ResidentPortalView: React.FC<ResidentPortalViewProps> = ({
               </button>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* QR Code and Attendance Control (MOVED TO TOP) */}
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+              <User className="w-4 h-4 text-indigo-600" />
+              Carnet de Identidad QR & Asistencias
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Muestra este código al llegar a las asambleas para un registro rápido.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center">
+          {/* Left: QR Code */}
+          <div className="flex flex-col items-center justify-center p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <QRCodeSVG 
+              value={resident ? resident.id : currentUser.documentId} 
+              size={120} 
+              level="H" 
+              includeMargin={true}
+            />
+            <span className="text-[10px] text-slate-500 font-mono">
+              ID: {resident ? resident.id.slice(-6) : currentUser.documentId}
+            </span>
+          </div>
+
+          {/* Right: Metrics */}
+          <div className="sm:col-span-2 grid grid-cols-2 gap-3">
+            <div className="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 flex flex-col justify-center">
+              <span className="text-xs text-indigo-600 font-bold mb-1">Reuniones Asistidas</span>
+              <div className="flex items-end gap-2">
+                <span className="text-3xl font-black text-indigo-900">{attendedMeetingsCount}</span>
+                <span className="text-xs text-indigo-700/70 mb-1">/ {completedMeetings.length} totales</span>
+              </div>
+            </div>
+
+            <div className={`p-4 rounded-xl border flex flex-col justify-center ${missedMeetingsCount > 0 ? 'bg-rose-50/50 border-rose-100' : 'bg-emerald-50/50 border-emerald-100'}`}>
+              <span className={`text-xs font-bold mb-1 ${missedMeetingsCount > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+                Faltas (Inasistencias)
+              </span>
+              <div className="flex items-end gap-2">
+                <span className={`text-3xl font-black ${missedMeetingsCount > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{missedMeetingsCount}</span>
+                {missedMeetingsCount > 0 && (
+                  <span className="text-[10px] text-rose-500 mb-1.5 flex items-center gap-1">
+                    <ShieldAlert className="w-3 h-3" /> ¡Atención!
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {completedMeetings.length > 0 && (
+            <div className="mt-3 pt-3 border-t border-slate-100">
+              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Historial de Asistencia a Asambleas</p>
+              <div className="space-y-1.5 max-h-36 overflow-y-auto">
+                {completedMeetings.map(m => {
+                  const attended = m.attendees.includes(qrId) || m.attendees.includes(qrDisplayId);
+                  return (
+                    <div key={m.id} className="flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg bg-slate-50 border border-slate-100">
+                      <div className="truncate pr-2">
+                        <span className="font-semibold text-slate-800">{m.title}</span>
+                        <span className="text-[10px] text-slate-500 block">{formatParaguayDate(m.date)}</span>
+                      </div>
+                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold shrink-0 ${attended ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
+                        {attended ? 'Presente' : 'Ausente (Falta)'}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -428,7 +523,7 @@ export const ResidentPortalView: React.FC<ResidentPortalViewProps> = ({
                     <div>
                       <span className="font-bold text-slate-800 block">{c.concept}</span>
                       <span className="text-[11px] text-slate-500">
-                        {c.date} • Recibo N° {c.receiptNumber} • {c.paymentMethod}
+                        {formatParaguayDate(c.date)} • Recibo N° {c.receiptNumber} • {c.paymentMethod}
                       </span>
                     </div>
                     <div className="text-right">
@@ -554,7 +649,7 @@ export const ResidentPortalView: React.FC<ResidentPortalViewProps> = ({
                 <div className="min-w-0">
                   <p className="text-xs font-bold text-slate-800 line-clamp-1">{doc.title}</p>
                   <p className="text-[11px] text-slate-500 mt-0.5">
-                    {doc.documentNumber} • {doc.date}
+                    {doc.documentNumber} • {formatParaguayDate(doc.date)}
                   </p>
                 </div>
                 <button
@@ -596,7 +691,7 @@ export const ResidentPortalView: React.FC<ResidentPortalViewProps> = ({
                 <div>
                   <p className="text-xs font-bold text-slate-800">{s.taskTitle}</p>
                   <p className="text-[11px] text-slate-500">
-                    Fecha: <strong>{s.dateScheduled}</strong> ({s.timeSlot})
+                    Fecha: <strong>{formatParaguayDate(s.dateScheduled)}</strong> ({s.timeSlot})
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

@@ -188,5 +188,18 @@ service cloud.firestore {
       allow update: if isSignedIn() && isValidId(recordId) && isValidRelocationRecord(incoming());
       allow delete: if isSignedIn() && isValidId(recordId);
     }
+
+    function isValidSettings(data) {
+      return data.keys().hasAll(['communityName', 'settlementLocation'])
+        && data.communityName is string
+        && data.settlementLocation is string;
+    }
+
+    match /settings/{docId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(docId) && isValidSettings(incoming());
+      allow update: if isSignedIn() && isValidId(docId) && isValidSettings(incoming());
+      allow delete: if isSignedIn() && isValidId(docId);
+    }
   }
 }

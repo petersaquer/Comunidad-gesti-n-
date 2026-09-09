@@ -1,4 +1,4 @@
-import { collection, getDocs, writeBatch, doc, deleteDoc, setDoc } from 'firebase/firestore';
+import { collection, getDocs, getDoc, writeBatch, doc, deleteDoc, setDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import deepEqual from 'fast-deep-equal';
@@ -23,12 +23,21 @@ const COLLECTIONS = {
 export async function fetchStateFromFirebase(): Promise<any | null> {
   try {
     const newState: any = {
-      settings: {} // We might want to store settings in a single doc later
+      settings: null
     };
 
     for (const [stateKey, collectionName] of Object.entries(COLLECTIONS)) {
       const querySnapshot = await getDocs(collection(db, collectionName));
       newState[stateKey] = querySnapshot.docs.map(doc => doc.data());
+    }
+
+    try {
+      const settingsDocSnap = await getDoc(doc(db, 'settings', 'general'));
+      if (settingsDocSnap.exists()) {
+        newState.settings = settingsDocSnap.data();
+      }
+    } catch (sErr) {
+      console.warn('[Firebase Client] Could not load settings doc:', sErr);
     }
 
     if (!newState.users || newState.users.length === 0) {
@@ -99,6 +108,15 @@ export function syncStateToFirebase(appState: any, immediate = false): Promise<b
               opCountInCurrentBatch++;
               totalOpCount++;
             }
+          }
+        }
+
+        // Sync settings if changed
+        if (appState.settings && Object.keys(appState.settings).length > 0) {
+          if (!lastSyncedState?.settings || !deepEqual(lastSyncedState.settings, appState.settings)) {
+            getActiveBatch().set(doc(db, 'settings', 'general'), appState.settings);
+            opCountInCurrentBatch++;
+            totalOpCount++;
           }
         }
 

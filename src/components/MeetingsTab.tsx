@@ -2,11 +2,18 @@ import React, { useState } from 'react';
 import { 
   Users, Plus, QrCode, Calendar as CalendarIcon, 
   MapPin, Clock, Search, ExternalLink, X, ShieldAlert,
-  CheckCircle2
+  CheckCircle2, Download
 } from 'lucide-react';
 import { Meeting, Resident, CommunitySettings, UserAccount } from '../types';
 import { Html5QrcodeScanner, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { AttendanceKPIs } from './AttendanceKPIs';
+import * as XLSX from 'xlsx';
+import { 
+  formatParaguayDate, 
+  formatParaguayTime, 
+  formatParaguayLongDateTime, 
+  getParaguayTodayISO 
+} from '../utils/paraguayDate';
 
 interface MeetingsTabProps {
   meetings: Meeting[];
@@ -37,10 +44,59 @@ export const MeetingsTab: React.FC<MeetingsTabProps> = ({
 
   // Handle WhatsApp notification
   const handleNotifyWhatsApp = (meeting: Meeting) => {
-    const formattedDate = new Date(meeting.date).toLocaleString('es-ES', { dateStyle: 'full', timeStyle: 'short' });
-    const message = `🔔 *Convocatoria a Reunión Comunal*\n\nEstimados vecinos de ${settings.communityName},\n\nSe convoca a la reunión: *${meeting.title}*.\n📅 Fecha y Hora: ${formattedDate}\n📍 Lugar: Sede Comunal\n\nPor favor, presentar su Carnet QR para el registro de asistencia.\n\nAtte. Comisión Directiva.`;
+    const formattedDate = formatParaguayLongDateTime(meeting.date);
+    const message = `🔔 *Convocatoria a Reunión Comunal*\n\nEstimados vecinos de ${settings.communityName},\n\nSe convoca a la reunión: *${meeting.title}*.\n📅 Fecha y Hora (Paraguay): ${formattedDate}\n📍 Lugar: Sede Comunal\n\nPor favor, presentar su Carnet QR para el registro de asistencia.\n\nAtte. Comisión Directiva.`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
+  };
+
+  const exportToExcel = (meeting: Meeting) => {
+    // Generate a complete census report with attendance status
+    const meetingDateFormatted = formatParaguayDate(meeting.date);
+    const allResidentsData = residents.map(resident => {
+      const isPresent = meeting.attendees.includes(resident.id) || meeting.attendees.includes(resident.documentId);
+      
+      return {
+        'Estado': isPresent ? 'PRESENTE' : 'AUSENTE (FALTA)',
+        'Nombre Completo': resident.fullName,
+        'Cédula de Identidad': resident.documentId,
+        'Manzana': resident.block || '-',
+        'Lote': resident.lot || '-',
+        'Fecha de Reunión': meetingDateFormatted
+      };
+    });
+
+    if (allResidentsData.length === 0) {
+      alert("No hay residentes registrados en el censo para generar el acta.");
+      return;
+    }
+
+    // Sort so Presentes are at the top, then by Block/Lot
+    allResidentsData.sort((a, b) => {
+      if (a.Estado === b.Estado) {
+        return a.Manzana.localeCompare(b.Manzana) || a.Lote.localeCompare(b.Lote);
+      }
+      return a.Estado === 'PRESENTE' ? -1 : 1;
+    });
+
+    const ws = XLSX.utils.json_to_sheet(allResidentsData);
+    
+    // Add column widths
+    const wscols = [
+      {wch: 20}, // Estado
+      {wch: 35}, // Nombre
+      {wch: 15}, // Cedula
+      {wch: 10}, // Manzana
+      {wch: 10}, // Lote
+      {wch: 20}, // Fecha
+    ];
+    ws['!cols'] = wscols;
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Control de Asistencia");
+    
+    const fileName = `Acta_Asistencia_INDERT_${meeting.title.replace(/\s+/g, '_')}_${getParaguayTodayISO()}.xlsx`;
+    XLSX.writeFile(wb, fileName);
   };
 
   const startMeeting = (meetingId: string) => {
@@ -78,7 +134,7 @@ export const MeetingsTab: React.FC<MeetingsTabProps> = ({
   const handleAutoCreateAndScan = () => {
     const autoMeeting: Meeting = {
       id: `mtg-${Date.now()}`,
-      title: `Reunión Extraordinaria ${new Date().toLocaleDateString()}`,
+      title: `Reunión Extraordinaria ${formatParaguayDate()}`,
       date: new Date().toISOString(),
       status: 'active',
       attendees: [],
@@ -209,8 +265,8 @@ export const MeetingsTab: React.FC<MeetingsTabProps> = ({
                     )}
                   </div>
                   <div className="flex items-center gap-4 text-sm text-slate-500">
-                    <span className="flex items-center gap-1.5"><CalendarIcon className="w-4 h-4" /> {new Date(mtg.date).toLocaleDateString()}</span>
-                    <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" /> {new Date(mtg.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span className="flex items-center gap-1.5"><CalendarIcon className="w-4 h-4" /> {formatParaguayDate(mtg.date)}</span>
+                    <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" /> {formatParaguayTime(mtg.date)}</span>
                   </div>
                   {mtg.status === 'completed' && (
                     <p className="text-sm text-slate-600 mt-2">
@@ -220,6 +276,15 @@ export const MeetingsTab: React.FC<MeetingsTabProps> = ({
                 </div>
                 
                 <div className="flex items-center gap-2">
+                  {mtg.status === 'completed' && (
+                    <button
+                      onClick={() => exportToExcel(mtg)}
+                      className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-colors tooltip-trigger"
+                      title="Descargar Acta (Excel)"
+                    >
+                      <Download className="w-5 h-5" />
+                    </button>
+                  )}
                   {mtg.status === 'scheduled' && (
                     <button
                       onClick={() => handleNotifyWhatsApp(mtg)}

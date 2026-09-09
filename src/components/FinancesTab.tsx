@@ -27,6 +27,7 @@ import {
 } from '../types';
 import { generatePaymentReminderMessage, openWhatsApp } from '../utils/notificationUtils';
 import { formatGuaranies } from '../utils/currency';
+import { formatParaguayDate } from '../utils/paraguayDate';
 import {
   isAdministrativeUser,
   canViewSensitiveResidentData,
@@ -177,7 +178,7 @@ export const FinancesTab: React.FC<FinancesTabProps> = ({
       receiptNumber: generatedReceipt,
       notes:
         (contribution.notes ? contribution.notes + ' ' : '') +
-        `[Aprobado y conciliado por Tesorería el ${new Date().toLocaleDateString('es-PY')}]`,
+        `[Aprobado y conciliado por Tesorería el ${formatParaguayDate()}]`,
     };
     onUpdateContribution(updated);
   };

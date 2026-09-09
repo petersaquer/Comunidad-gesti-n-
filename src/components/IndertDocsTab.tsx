@@ -29,6 +29,7 @@ import {
   UserAccount,
 } from '../types';
 import { formatGuaranies } from '../utils/currency';
+import { formatParaguayDate } from '../utils/paraguayDate';
 import { downloadIndertDocument } from '../utils/fileDownloader';
 import { isAdministrativeUser } from '../utils/privacyUtils';
 
@@ -125,7 +126,7 @@ INSTITUTO NACIONAL DE DESARROLLO RURAL Y DE LA TIERRA (I.N.D.E.R.T.)
 ${settings.communityName.toUpperCase()}
 COLONIA / ASENTAMIENTO: ${settings.settlementLocation}
 EXPEDIENTE INDERT PRINCIPAL: ${settings.indertExpedienteNumber || '4821/2024'}
-FECHA DE EMISIÓN DEL LEGAJO: ${new Date().toLocaleDateString('es-PY')}
+FECHA DE EMISIÓN DEL LEGAJO: ${formatParaguayDate()}
 ================================================================================
 
 ÍNDICE CONSOLIDADO DE EXPEDIENTES, MENSURAS, FACTURAS Y RENDICIONES DE GASTOS:

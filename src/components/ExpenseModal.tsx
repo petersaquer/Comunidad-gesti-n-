@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Receipt, CheckCircle2 } from 'lucide-react';
 import { Expense, ExpenseCategory, CommunitySettings } from '../types';
+import { getParaguayCurrentMonth, getParaguayTodayISO } from '../utils/paraguayDate';
 
 interface ExpenseModalProps {
   isOpen: boolean;
@@ -17,8 +18,8 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
   initialExpense,
   settings,
 }) => {
-  const currentMonth = new Date().toISOString().substring(0, 7);
-  const today = new Date().toISOString().split('T')[0];
+  const currentMonth = getParaguayCurrentMonth();
+  const today = getParaguayTodayISO();
 
   const [formData, setFormData] = useState<Partial<Expense>>({
     category: 'luz',

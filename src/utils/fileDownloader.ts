@@ -1,5 +1,6 @@
 import { IndertDocument, Resident, Contribution, CommunitySettings } from '../types';
 import { formatGuaranies } from './currency';
+import { formatParaguayDate, formatParaguayDateTime } from './paraguayDate';
 
 /**
  * Downloads an IndertDocument. If fileData is present, downloads it directly.
@@ -49,7 +50,7 @@ mensura judicial y rendición de cuentas de aportes y gastos comunes.
 
 Firma del Presidente: ________________________ (${settings.presidentName})
 Firma de la Tesorera: ________________________ (${settings.treasurerName})
-Fecha de descarga y emisión: ${new Date().toLocaleString('es-PY')}
+Fecha de descarga y emisión: ${formatParaguayDateTime()}
 ================================================================================
 `;
 
@@ -123,7 +124,7 @@ ${resident.notes || 'Sin observaciones impeditivas.'}
 Se expide el presente certificado a pedido del interesado para su presentación ante
 el INDERT, ANDE, ESSAP u otras instituciones públicas o privadas pertinentes.
 
-Dado en ${settings.settlementLocation}, a los ${new Date().toLocaleDateString('es-PY')}.
+Dado en ${settings.settlementLocation}, a los ${formatParaguayDate()}.
 
 
 __________________________________          __________________________________

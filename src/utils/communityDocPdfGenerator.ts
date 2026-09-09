@@ -1,5 +1,6 @@
 import { jsPDF } from 'jspdf';
 import { CommunitySettings } from '../types';
+import { formatParaguayDate } from './paraguayDate';
 
 /**
  * Generates an official, highly-structured, comprehensive PDF master guide for community members.
@@ -513,14 +514,100 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
   currentY += 4;
 
   // ==========================================
-  // PAGE 5: MARCO LEGAL, DESCARGO NO GUBERNAMENTAL, TÉRMINOS & PRIVACIDAD
+  // PAGE 5: ASAMBLEAS, CARNET DIGITAL, MARCO LEGAL & DESCARGO
   // ==========================================
   doc.addPage();
   pageNumRef.current += 1;
   currentY = 20;
 
-  // SECCIÓN 10: DESCARGO NO GUBERNAMENTAL & USO INTERNO
-  renderSectionHeader('10. DESCARGO LEGAL: HERRAMIENTA PRIVADA DE USO INTERNO VECINAL', [220, 38, 38]);
+  // SECCIÓN 10: ASAMBLEAS GENERALES, CONTROL QR & ACTAS INDERT
+  renderSectionHeader('10. SISTEMA DE ASAMBLEAS SOBERANAS, CONTROL DE ASISTENCIA QR & ACTAS INDERT', [24, 119, 242]);
+
+  const assemblyRules = [
+    {
+      t: '1. Soberanía Asamblearia & Ley 1863/02:',
+      d: 'La Asamblea General es la máxima autoridad soberana del asentamiento. Toda decisión sobre cuotas, mensura y solicitudes al INDERT requiere deliberación y quorum fehaciente.',
+    },
+    {
+      t: '2. Valor Decisivo para Titulación INDERT:',
+      d: 'El INDERT exige acreditación de arraigo efectivo y vida comunitaria activa. Las actas de asistencia refrendadas constituyen la prueba medular requerida por los peritos para titular.',
+    },
+    {
+      t: '3. Acreditación QR & Representación:',
+      d: 'El registro se realiza con cámara activa al Carnet QR o C.I. Solo vota el titular o cónyuge censado (1 voto por lote). Queda prohibido votar por terceros o reunir poderes ajenos.',
+    },
+    {
+      t: '4. Escala de Faltas e Inasistencias:',
+      d: '1 falta: alerta en portal vecinal. 2 faltas consecutivas: apercibimiento y suspensión temporal de voto. 3 faltas consecutivas (o 5 alternadas): pérdida de prioridad social e informe al INDERT.',
+    },
+    {
+      t: '5. Justificación Perentoria (72 hs):',
+      d: 'Por enfermedad o motivo laboral justificado, el residente dispone de hasta 72 horas hábiles para presentar certificado médico o constancia a la Secretaría de Actas.',
+    },
+    {
+      t: '6. Planilla Oficial en Excel (.xlsx):',
+      d: 'Al cerrar la asamblea, el sistema genera la nómina completa con orden por Manzana/Lote, cálculo de quorum y sellos de PRESENTE/FALTA para firma y elevación al INDERT.',
+    },
+  ];
+
+  assemblyRules.forEach((ar) => {
+    checkPageBreak(8, pageNumRef);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.2);
+    doc.setTextColor(15, 23, 42);
+    doc.text(`• ${ar.t}`, margin + 2, currentY + 3);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(6.8);
+    doc.setTextColor(71, 85, 105);
+    const splitAr = doc.splitTextToSize(ar.d, contentWidth - 45);
+    doc.text(splitAr, margin + 42, currentY + 3);
+    currentY += 6.5;
+  });
+
+  currentY += 3;
+
+  // SECCIÓN 11: CARNET DIGITAL DEL VECINO, HUSO OFICIAL PARAGUAY & NUBE
+  renderSectionHeader('11. CARNET DIGITAL DEL VECINO, HORARIO OFICIAL PARAGUAY & RESPALDO EN NUBE', [13, 148, 136]);
+
+  const digitalPillars = [
+    {
+      t: '1. Carnet Digital Personalizado:',
+      d: 'Credencial accesible en "Mi Cuenta" con Código QR único, linderos y estado de aportes, apto para gestiones ante ANDE, ESSAP e INDERT.',
+    },
+    {
+      t: '2. Hora Legal de Paraguay:',
+      d: 'Operación bajo huso oficial (America/Asuncion, UTC-4 / UTC-3), sincronizando recibos, transferencias SIPAP/Billeteras y actas sin desfase.',
+    },
+    {
+      t: '3. Nube Firestore & Libro Abierto:',
+      d: 'Respaldo automático en Google Cloud Firestore. Transparencia total donde cada vecino puede auditar balances y legajos las 24 horas.',
+    },
+    {
+      t: '4. Reubicaciones Inmutables:',
+      d: 'Registro perpetuo con resolución asamblearia y causa justificada (apertura vial/mensura), impidiendo ventas fraudulentas o dobles loteos.',
+    },
+  ];
+
+  digitalPillars.forEach((dp) => {
+    checkPageBreak(8, pageNumRef);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.2);
+    doc.setTextColor(15, 23, 42);
+    doc.text(`• ${dp.t}`, margin + 2, currentY + 3);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(6.8);
+    doc.setTextColor(71, 85, 105);
+    const splitDp = doc.splitTextToSize(dp.d, contentWidth - 45);
+    doc.text(splitDp, margin + 42, currentY + 3);
+    currentY += 6.5;
+  });
+
+  currentY += 4;
+
+  // SECCIÓN 12: DESCARGO NO GUBERNAMENTAL & USO INTERNO
+  renderSectionHeader('12. DESCARGO LEGAL: HERRAMIENTA PRIVADA DE USO INTERNO VECINAL', [220, 38, 38]);
 
   doc.setFillColor(254, 242, 242);
   doc.roundedRect(margin, currentY, contentWidth, 24, 2, 2, 'F');
@@ -542,8 +629,8 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
 
   currentY += 28;
 
-  // SECCIÓN 11: TÉRMINOS Y CONDICIONES & POLÍTICAS DE PRIVACIDAD
-  renderSectionHeader('11. TÉRMINOS Y CONDICIONES DEL PADRÓN & PRIVACIDAD (LEY 1682/01 Y LEY 6534/20)');
+  // SECCIÓN 13: TÉRMINOS Y CONDICIONES & POLÍTICAS DE PRIVACIDAD
+  renderSectionHeader('13. TÉRMINOS Y CONDICIONES DEL PADRÓN & PRIVACIDAD (LEY 1682/01 Y LEY 6534/20)');
 
   const legalClauses = [
     {
@@ -580,7 +667,7 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
 
   currentY += 4;
 
-  // SECCIÓN 12: RATIFICACIÓN Y CUADRO DE FIRMAS
+  // SECCIÓN 14: RATIFICACIÓN Y CUADRO DE FIRMAS
   checkPageBreak(38, pageNumRef);
 
   doc.setFillColor(248, 250, 252);
@@ -599,7 +686,7 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
   doc.setFontSize(6.8);
   doc.setTextColor(71, 85, 105);
   doc.text(
-    `Emitido y refrendado en ${settings.settlementLocation}, Paraguay, en fecha ${new Date().toLocaleDateString('es-PY')}.`,
+    `Emitido y refrendado en ${settings.settlementLocation}, Paraguay, en fecha ${formatParaguayDate()}.`,
     pageWidth / 2,
     currentY + 9,
     { align: 'center' }
