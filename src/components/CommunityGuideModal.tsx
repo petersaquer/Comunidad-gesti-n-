@@ -1343,15 +1343,27 @@ export const CommunityGuideModal: React.FC<CommunityGuideModalProps> = ({
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
                 <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                   <FileText className="w-4 h-4 text-blue-600" />
-                  <span>Términos y Condiciones del Padrón Comunitario</span>
+                  <span>Términos y Condiciones del Padrón Comunitario & Régimen de Tierras</span>
                 </h4>
                 
-                <div className="space-y-2 text-[11px] text-slate-600">
+                <div className="space-y-2.5 text-[11px] text-slate-600">
                   <p>
-                    <strong className="text-slate-800">• Declaración Jurada de Datos:</strong> Al registrarse, el vecino manifiesta bajo fe de juramento la veracidad de su identidad, estado civil y residencia efectiva en el lote.
+                    <strong className="text-slate-800">• Declaración Jurada de Datos:</strong> Al registrarse, el vecino manifiesta bajo fe de juramento la veracidad de su identidad, estado civil y residencia efectiva en el lote. La falsedad anula cualquier derecho adquirido.
                   </p>
                   <p>
-                    <strong className="text-slate-800">• Prohibición de Especulación:</strong> Los lotes asignados son para residencia familiar. Queda estrictamente prohibido el subarrendamiento o la venta clandestina sin aval asambleario.
+                    <strong className="text-slate-800">• Normas de Asignación (Ley N° 1863/02 Estatuto Agrario):</strong> Exigencia de 18 años de edad, no poseer otros inmuebles inscriptos a su nombre ni del cónyuge en Registros Públicos / Catastro Nacional, y destinar el lote a residencia familiar pacífica e ininterrumpida.
+                  </p>
+                  <p>
+                    <strong className="text-slate-800">• Escala Oficial de Prioridades Sociales:</strong> Orden riguroso de prelación: 1) Madres solteras cabezas de familia con hijos menores, 2) Personas con discapacidad (SENADIS) o enfermedades crónicas, 3) Adultos mayores desamparados, 4) Familias jóvenes sin vivienda propia, 5) Vecinos censados activos en faenas comunales.
+                  </p>
+                  <p>
+                    <strong className="text-slate-800">• Plazos de Ocupación Efectiva (30-60 días):</strong> El adjudicatario está obligado a iniciar mejoras habitacionales habitables y residir en un plazo máximo de 30 a 60 días. Se prohíbe mantener terrenos en abandono. Rige el principio de un solo lote por familia.
+                  </p>
+                  <p>
+                    <strong className="text-slate-800">• Prohibición Estricta de Especulación:</strong> Los lotes asignados son para residencia familiar. Queda estrictamente prohibida la venta, subarriendo o cesión informal con fines lucrativos (nulos de pleno derecho).
+                  </p>
+                  <p>
+                    <strong className="text-slate-800">• Causales de Revocación y Recuperación:</strong> Abandono mayor a 90 días, reventa clandestina, 3 faltas consecutivas o 5 alternadas a asambleas sin justificación médica/laboral, o conductas graves contra la seguridad vecinal.
                   </p>
                   <p>
                     <strong className="text-slate-800">• Cumplimiento de Deberes Sociales:</strong> El residente se compromete al abono de las cuotas sociales fijadas en asamblea y a la participación en faenas de interés común.

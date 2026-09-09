@@ -398,6 +398,80 @@ export const LegalTermsPrivacyModal: React.FC<LegalTermsPrivacyModalProps> = ({
                     Cualquier controversia de linderos o convivencia vecinal será tratada en primera instancia por el Comité de Mediación Comunitaria en base a los registros topográficos y las actas de asamblea.
                   </p>
                 </div>
+
+                {/* Cláusula 6 */}
+                <div className="p-3 rounded-xl bg-blue-50/50 border border-blue-200 space-y-1.5">
+                  <h4 className="font-black text-blue-950 text-[11px] uppercase flex items-center gap-1.5">
+                    <Scale className="w-3.5 h-3.5 text-[#1877F2]" />
+                    <span>Cláusula 6: Normas y Requisitos Obligatorios para la Adjudicación de Terreno (Ley N° 1863/02)</span>
+                  </h4>
+                  <p className="text-[11px] text-slate-600">
+                    La asignación de parcelas responde estrictamente al Estatuto Agrario y las directrices del INDERT:
+                  </p>
+                  <ul className="text-[11px] text-slate-600 space-y-1 list-disc list-inside pl-1">
+                    <li><strong>Mayoría de edad:</strong> 18 años cumplidos o emancipación legal acreditada.</li>
+                    <li><strong>Carencia de otros inmuebles:</strong> Requisito legal excluyente; ni el titular ni su cónyuge/pareja deben poseer otros inmuebles inscriptos en la Dirección General de Registros Públicos ni Catastro Nacional.</li>
+                    <li><strong>Residencia y arraigo exclusivo:</strong> El lote es para vivienda familiar permanente; no se admiten fines especulativos ni segundas residencias.</li>
+                    <li><strong>Legajo documental completo:</strong> C.I. vigente autenticada (titular y cónyuge), Certificado de Vida y Residencia policial, Certificado de Nacimiento de hijos menores y, si corresponde, carnet de discapacidad (SENADIS).</li>
+                  </ul>
+                </div>
+
+                {/* Cláusula 7 */}
+                <div className="p-3 rounded-xl bg-white border border-slate-200 space-y-1.5">
+                  <h4 className="font-black text-slate-900 text-[11px] uppercase text-blue-800 flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Cláusula 7: Escala Oficial de Prioridades Sociales de Asignación</span>
+                  </h4>
+                  <p className="text-[11px] text-slate-600">
+                    Ante lotes disponibles o recuperados, la adjudicación se realiza con riguroso orden de prelación social:
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-0.5 text-[10.5px]">
+                    <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
+                      <strong className="text-slate-900 block font-black">1. Prioridad Máxima:</strong>
+                      <span className="text-slate-600">Madres solteras cabezas de hogar y familias con hijos menores (Art. 54 CN).</span>
+                    </div>
+                    <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
+                      <strong className="text-slate-900 block font-black">2. Segunda Prioridad:</strong>
+                      <span className="text-slate-600">Familias con miembros con discapacidad (SENADIS) o enfermedades crónicas.</span>
+                    </div>
+                    <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
+                      <strong className="text-slate-900 block font-black">3. Tercera Prioridad:</strong>
+                      <span className="text-slate-600">Adultos mayores (60+ años) en situación de desamparo habitacional.</span>
+                    </div>
+                    <div className="p-2 rounded-lg bg-slate-50 border border-slate-200">
+                      <strong className="text-slate-900 block font-black">4. Cuarta y Quinta:</strong>
+                      <span className="text-slate-600">Parejas jóvenes con hijos sin casa y vecinos censados activos en faenas comunales.</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cláusula 8 */}
+                <div className="p-3 rounded-xl bg-white border border-slate-200 space-y-1.5">
+                  <h4 className="font-black text-slate-900 text-[11px] uppercase text-blue-800 flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-blue-600" />
+                    <span>Cláusula 8: Plazo Perentorio de Ocupación Efectiva y Límite Familiar</span>
+                  </h4>
+                  <p className="text-[11px] text-slate-600">
+                    El adjudicado dispone de un <strong>plazo improrrogable de 30 a 60 días corridos</strong> desde la resolución de la Comisión para iniciar la ocupación material e instalación de mejoras habitacionales habitadas. Se prohíbe mantener terrenos en maleza o abandono. Rige el principio de <strong>un solo lote por núcleo familiar</strong>.
+                  </p>
+                </div>
+
+                {/* Cláusula 9 */}
+                <div className="p-3 rounded-xl bg-rose-50/60 border border-rose-200 space-y-1.5">
+                  <h4 className="font-black text-rose-950 text-[11px] uppercase flex items-center gap-1.5">
+                    <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
+                    <span>Cláusula 9: Causales de Revocación y Recuperación Inmediata de la Parcela</span>
+                  </h4>
+                  <p className="text-[11px] text-rose-900/90 leading-snug">
+                    La Comisión Vecinal y la Asamblea General están facultadas para cancelar la asignación y elevar dictamen de reasignación al INDERT en los siguientes supuestos:
+                  </p>
+                  <ul className="text-[10.5px] text-slate-700 space-y-1 list-disc list-inside pl-1">
+                    <li><strong>Abandono mayor a 90 días:</strong> Inactividad física sin aviso fundado a la Secretaría.</li>
+                    <li><strong>Intento de reventa o subarriendo informal:</strong> Contratos clandestinos o publicaciones especulativas (nulas de pleno derecho).</li>
+                    <li><strong>Inasistencias reiteradas:</strong> Acumulación de 3 faltas consecutivas o 5 alternadas en el año a asambleas sin certificado médico o laboral (extingue la presunción de arraigo legal).</li>
+                    <li><strong>Falsedad en la declaración jurada:</strong> Ocultamiento de propiedades o datos falsos en el censo.</li>
+                  </ul>
+                </div>
               </div>
 
             </div>

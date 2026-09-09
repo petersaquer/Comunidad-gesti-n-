@@ -51,6 +51,39 @@ Plataforma integral de autogestión vecinal, censo de ocupantes, expedientes del
 
 ---
 
+## 📜 Normas Oficiales para la Asignación y Posesión de Terrenos (Ley N° 1863/02)
+
+El sistema incorpora en sus **Términos y Condiciones del Padrón Comunitario** y en la **Guía Comunitaria Oficial** el marco legal estricto para la postulación y adjudicación de parcelas:
+
+1. **Requisitos Excluyentes del Postulante:**
+   - Mayoría de edad (18 años cumplidos) o emancipación legal.
+   - **Carencia absoluta de otros inmuebles:** Ni el titular ni su cónyuge/concubino/a deben figurar con propiedades inscriptas en la Dirección General de Registros Públicos ni Catastro Nacional. La tierra fiscal tiene función social.
+   - Destino exclusivo para **residencia familiar y ocupación pacífica continua**.
+   - Presentación de C.I. autenticada, Certificado de Vida y Residencia policial y libreta de familia.
+
+2. **Escala Oficial de Prioridades Sociales de Adjudicación:**
+   - **Prioridad 1 (Máxima):** Madres solteras cabezas de familia y núcleos con niños menores de edad (Art. 54 CN).
+   - **Prioridad 2:** Familias con integrantes con discapacidad acreditada (SENADIS) o enfermedades crónicas.
+   - **Prioridad 3:** Adultos mayores (60+ años) desamparados o sin jubilación habitacional.
+   - **Prioridad 4:** Parejas jóvenes en formación con hijos que no posean casa propia.
+   - **Prioridad 5:** Vecinos censados activos en faenas, guardias y reuniones comunales.
+
+3. **Plazos Perentorios de Ocupación e Instalación:**
+   - Plazo de **30 a 60 días corridos** desde la asignación para iniciar la ocupación física real y edificación de mejoras habitacionales.
+   - Prohibición de mantener terrenos baldíos o en maleza.
+   - Principio limitante: **un solo lote por núcleo familiar**.
+
+4. **Prohibición Tajante de Reventa y Especulación:**
+   - La tierra no se vende, alquila ni cede clandestinamente. Cualquier contrato privado informal sin aval de la Comisión y del INDERT es **nulo de pleno derecho**.
+
+5. **Causales de Revocación y Recuperación Inmediata de la Parcela:**
+   - Abandono mayor a 90 días corridos sin justificación formal.
+   - Ofrecimiento de venta, permuta clandestina o subarrendamiento lucrativo.
+   - Acumulación de **3 faltas consecutivas o 5 alternadas en el año a asambleas vecinales sin justificación médica/laboral** (extingue la presunción de arraigo legal exigida por el INDERT).
+   - Falsedad u ocultamiento en la declaración jurada de bienes.
+
+---
+
 ## 👥 Roles de Usuario y Matriz de Permisos (RBAC)
 
 | Rol | Descripción | Permisos Clave |

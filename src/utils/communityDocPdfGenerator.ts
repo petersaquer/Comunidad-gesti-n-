@@ -649,9 +649,26 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
       t: '4. Protección de Datos (ARCO):',
       d: 'Los datos personales (C.I., teléfonos, grupo familiar) son de uso censal exclusivo y JAMÁS serán comercializados a terceros.',
     },
+    {
+      t: '5. Normas de Asignación (Ley 1863/02):',
+      d: '18 años de edad, carencia absoluta de otros inmuebles inscriptos a nombre del solicitante o cónyuge y destino exclusivo para vivienda familiar.',
+    },
+    {
+      t: '6. Escala de Prioridades Sociales:',
+      d: '1) Madres solteras cabezas de hogar y niños, 2) Discapacidad (SENADIS) o enfermedad crónica, 3) Adultos mayores desamparados, 4) Familias jóvenes sin casa.',
+    },
+    {
+      t: '7. Plazo Perentorio de Ocupación (30-60 ds):',
+      d: 'Obligación de residir e instalar mejoras habitables en 30-60 días corridos. Prohibición de maleza/abandono. Máximo un lote por núcleo familiar.',
+    },
+    {
+      t: '8. Revocación Inmediata de Lote:',
+      d: 'Abandono mayor a 90 días, reventa clandestina, falsedad jurada o acumulación de 3 faltas consecutivas o 5 alternadas a asambleas sin justificación médica.',
+    },
   ];
 
   legalClauses.forEach((c) => {
+    checkPageBreak(8, pageNumRef);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(7.2);
     doc.setTextColor(15, 23, 42);
@@ -662,7 +679,7 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
     doc.setTextColor(71, 85, 105);
     const splitC = doc.splitTextToSize(c.d, contentWidth - 45);
     doc.text(splitC, margin + 42, currentY + 3);
-    currentY += 6;
+    currentY += 6.5;
   });
 
   currentY += 4;
