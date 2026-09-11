@@ -29,18 +29,18 @@ interface LegalTermsPrivacyModalProps {
   isOpen: boolean;
   onClose: () => void;
   settings: CommunitySettings;
-  defaultTab?: 'disclaimer' | 'terms' | 'privacy' | 'transparency';
-  initialTab?: 'disclaimer' | 'terms' | 'privacy' | 'transparency';
+  defaultTab?: 'legality' | 'disclaimer' | 'terms' | 'privacy' | 'transparency';
+  initialTab?: 'legality' | 'disclaimer' | 'terms' | 'privacy' | 'transparency';
   onOpenCommunityGuideModal?: () => void;
 }
 
-type TabType = 'disclaimer' | 'terms' | 'privacy' | 'transparency';
+type TabType = 'legality' | 'disclaimer' | 'terms' | 'privacy' | 'transparency';
 
 export const LegalTermsPrivacyModal: React.FC<LegalTermsPrivacyModalProps> = ({
   isOpen,
   onClose,
   settings,
-  defaultTab = 'disclaimer',
+  defaultTab = 'legality',
   initialTab,
   onOpenCommunityGuideModal,
 }) => {
@@ -127,6 +127,18 @@ export const LegalTermsPrivacyModal: React.FC<LegalTermsPrivacyModalProps> = ({
         {/* Navigation Tabs */}
         <div className="flex border-b border-slate-200 bg-slate-50 px-2 sm:px-4 gap-1.5 sm:gap-2 overflow-x-auto shrink-0 py-2 no-scrollbar">
           <button
+            onClick={() => setActiveTab('legality')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+              activeTab === 'legality'
+                ? 'bg-[#1877F2] text-white shadow-xs ring-1 ring-blue-700'
+                : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
+            }`}
+          >
+            <Scale className="w-3.5 h-3.5 text-white" />
+            <span className="font-extrabold">1. Respaldo Jurídico (¿Por qué es Legal?)</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('disclaimer')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition-all cursor-pointer shrink-0 ${
               activeTab === 'disclaimer'
@@ -135,7 +147,7 @@ export const LegalTermsPrivacyModal: React.FC<LegalTermsPrivacyModalProps> = ({
             }`}
           >
             <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-            <span className="font-extrabold">1. Descargo Legal (No Gubernamental)</span>
+            <span className="font-bold">2. Descargo Legal (No Gubernamental)</span>
           </button>
 
           <button
@@ -147,7 +159,7 @@ export const LegalTermsPrivacyModal: React.FC<LegalTermsPrivacyModalProps> = ({
             }`}
           >
             <Eye className="w-3.5 h-3.5 text-emerald-600" />
-            <span>2. Transparencia & Caja Abierta</span>
+            <span>3. Transparencia & Caja Abierta</span>
           </button>
 
           <button
@@ -159,7 +171,7 @@ export const LegalTermsPrivacyModal: React.FC<LegalTermsPrivacyModalProps> = ({
             }`}
           >
             <FileText className="w-3.5 h-3.5 text-blue-600" />
-            <span>3. Términos & Condiciones</span>
+            <span>4. Normas del Terreno & Convivencia</span>
           </button>
 
           <button
@@ -171,13 +183,169 @@ export const LegalTermsPrivacyModal: React.FC<LegalTermsPrivacyModalProps> = ({
             }`}
           >
             <Lock className="w-3.5 h-3.5 text-indigo-600" />
-            <span>4. Políticas de Privacidad (Datos)</span>
+            <span>5. Políticas de Privacidad (Datos)</span>
           </button>
         </div>
 
         {/* Content Body */}
         <div className="flex-1 overflow-y-auto p-3.5 sm:p-6 space-y-4 sm:space-y-6 text-slate-700">
-          
+
+          {/* TAB 0 / NUEVO: RESPALDO JURÍDICO Y LEYES DEL PARAGUAY */}
+          {activeTab === 'legality' && (
+            <div className="space-y-5 animate-in fade-in duration-150">
+              
+              {/* Banner de Fundamentación Legal */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white space-y-3 shadow-sm">
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-400/30 text-blue-300 flex items-center justify-center shrink-0">
+                    <Scale className="w-6 h-6 text-blue-300" />
+                  </div>
+                  <div>
+                    <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider mb-1">
+                      <CheckCircle2 className="w-3 h-3" />
+                      100% Legal y Amparado por las Leyes del Paraguay
+                    </div>
+                    <h3 className="text-sm sm:text-base font-black text-white">
+                      Fundamentación Jurídica de la Comisión Vecinal y del Sistema de Gestión Interna
+                    </h3>
+                    <p className="text-xs text-blue-200/90 leading-relaxed mt-1">
+                      El funcionamiento de la Comisión Vecinal de <strong>{settings.communityName}</strong>, el censo de ocupantes, la recaudación de cuotas sociales y las normas internas de convivencia no son arbitrarios: están respaldados y reconocidos de manera expresa por la legislación paraguaya vigente.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4 Pilares del Marco Legal Paraguayo */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                  <Landmark className="w-4 h-4 text-[#1877F2]" />
+                  <span>Las 4 Leyes Fundamentales que nos Respaldan</span>
+                </h4>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  
+                  {/* Ley 1: Constitución Nacional */}
+                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-black uppercase tracking-wide px-2 py-0.5 rounded-md bg-blue-100 text-blue-800">
+                        Constitución Nacional (1992)
+                      </span>
+                      <span className="text-[10px] font-bold text-slate-500">Arts. 42, 114 y 115</span>
+                    </div>
+                    <h5 className="text-xs font-black text-slate-900">
+                      Libertad de Asociación & Garantía del Arraigo Rural
+                    </h5>
+                    <p className="text-[11px] text-slate-600 leading-relaxed">
+                      El <strong>Art. 42</strong> consagra el derecho humano inalienable de los vecinos a asociarse pacíficamente en una Comisión para defender sus intereses comunes. Los <strong>Arts. 114 y 115</strong> obligan al Estado paraguayo a fomentar la pequeña propiedad y la regularización dominial de asentamientos a través del INDERT.
+                    </p>
+                  </div>
+
+                  {/* Ley 2: Estatuto Agrario INDERT */}
+                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-black uppercase tracking-wide px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">
+                        Estatuto Agrario (INDERT)
+                      </span>
+                      <span className="text-[10px] font-bold text-slate-500">Ley 1863/02 & Ley 2419/04</span>
+                    </div>
+                    <h5 className="text-xs font-black text-slate-900">
+                      Reconocimiento de Comisiones Pro-Tierra
+                    </h5>
+                    <p className="text-[11px] text-slate-600 leading-relaxed">
+                      El Estatuto Agrario y las resoluciones del INDERT reconocen a las Comisiones Vecinales organizadas como los <strong>interlocutores comunitarios válidos</strong> para presentar censos poblacionales, solicitar peritajes técnicos de mensura y canalizar las adjudicaciones familiares.
+                    </p>
+                  </div>
+
+                  {/* Ley 3: Ley Orgánica Municipal */}
+                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-black uppercase tracking-wide px-2 py-0.5 rounded-md bg-purple-100 text-purple-800">
+                        Ley Orgánica Municipal
+                      </span>
+                      <span className="text-[10px] font-bold text-slate-500">Ley N° 3966/2010</span>
+                    </div>
+                    <h5 className="text-xs font-black text-slate-900">
+                      Personería y Gestión de Servicios Públicos
+                    </h5>
+                    <p className="text-[11px] text-slate-600 leading-relaxed">
+                      Regula el procedimiento para que la Municipalidad local reconozca formalmente a la Comisión Vecinal mediante <strong>Resolución de Intendencia</strong>, confiriéndole legitimidad institucional para gestionar apertura de caminos, tendido de caños de agua y electrificación (ANDE).
+                    </p>
+                  </div>
+
+                  {/* Ley 4: Código Civil Paraguayo */}
+                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-black uppercase tracking-wide px-2 py-0.5 rounded-md bg-amber-100 text-amber-800">
+                        Código Civil Paraguayo
+                      </span>
+                      <span className="text-[10px] font-bold text-slate-500">Art. 1909 y concordantes</span>
+                    </div>
+                    <h5 className="text-xs font-black text-slate-900">
+                      Tutela de la Posesión de Hecho y Arraigo
+                    </h5>
+                    <p className="text-[11px] text-slate-600 leading-relaxed">
+                      Protege la posesión pública, pacífica e ininterrumpida de buena fe de las familias que habitan y mejoran sus parcelas. El registro catastral y las constancias digitales emitidas por este sistema constituyen <strong>plena evidencia documental de posesión efectiva</strong> ante peritos y autoridades judiciales.
+                    </p>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* Cuadro Comparativo: ¿Qué es Legal vs. Qué es Delito? */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 space-y-3">
+                <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <span>Para Tranquilidad de los Vecinos: Límites Claros de la Legalidad</span>
+                </h4>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                  
+                  {/* Columna Verde: Legal */}
+                  <div className="p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-2">
+                    <div className="flex items-center gap-2 text-emerald-900 font-black">
+                      <span className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs">✓</span>
+                      <span>100% LEGAL Y PERMITIDO (Nuestro Manejo):</span>
+                    </div>
+                    <ul className="text-[11px] text-emerald-950 space-y-1.5 leading-snug">
+                      <li>• <strong>Llevar el censo y catastro interno:</strong> Es un requisito previo e indispensable que el INDERT exige a toda comunidad antes de enviar agrimensores.</li>
+                      <li>• <strong>Cobrar aportes para gastos comunes:</strong> Es legal recaudar cuotas sociales para pagar la mensura judicial, combustible de motoniveladoras, caños de agua potable y copias de expedientes.</li>
+                      <li>• <strong>Sancionar inasistencias a reuniones y faenas:</strong> Es plenamente legal en el derecho asociativo cuando fue aprobado por la <strong>Asamblea Soberana de Vecinos</strong>. Quien no puede aportar su fuerza de trabajo, aporta una compensación para contratar reemplazos.</li>
+                      <li>• <strong>Emitir constancias de ocupación y arraigo con QR:</strong> Sirven como certificado gremial de posesión ante la ANDE, aguaterías o juzgados de paz.</li>
+                    </ul>
+                  </div>
+
+                  {/* Columna Roja: Prohibido / Delito */}
+                  <div className="p-3.5 rounded-xl bg-rose-50/70 border border-rose-200 space-y-2">
+                    <div className="flex items-center gap-2 text-rose-900 font-black">
+                      <span className="w-5 h-5 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs">✕</span>
+                      <span>PROHIBIDO POR LEY (Líneas Rojas que el Sistema Evita):</span>
+                    </div>
+                    <ul className="text-[11px] text-rose-950 space-y-1.5 leading-snug">
+                      <li>• <strong>Vender terrenos fiscales o cobrar "precio de lote":</strong> Nadie puede vender tierras del Estado. Solo el INDERT adjudica y titula. Por eso en nuestro sistema solo se cobran gastos de gestión social, jamás "precios de compraventa".</li>
+                      <li>• <strong>Desalojos por cuenta propia o con violencia:</strong> Nadie puede despojar a un vecino a la fuerza. Las bajas de lote por abandono comprobado mayor a 90 días se labran en actas comunitarias y se informan al INDERT.</li>
+                      <li>• <strong>Cobros en negro sin recibo:</strong> Todo cobro debe tener comprobante digital numerado emitido por Tesorería y rendición pública en el balance del sistema.</li>
+                    </ul>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* Conclusión para Asambleas */}
+              <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-3">
+                <Sparkles className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+                <div className="text-xs text-amber-950 space-y-1">
+                  <p className="font-bold">
+                    Resumen para explicar a cualquier vecino, perito o autoridad:
+                  </p>
+                  <p className="text-[11px] text-amber-900 leading-relaxed">
+                    <em>"Esta plataforma es el libro digital oficial de la Comisión Vecinal. Garantiza que ningún lote se venda dos veces, que ningún dirigente toque dinero sin recibo público y que el tiempo de arraigo y la inversión de cada familia queden sellados con fecha cierta para la titulación en el INDERT."</em>
+                  </p>
+                </div>
+              </div>
+
+            </div>
+          )}
+
           {/* TAB 1: DESCARGO LEGAL NO GUBERNAMENTAL */}
           {activeTab === 'disclaimer' && (
             <div className="space-y-4 sm:space-y-5 animate-in fade-in duration-150">

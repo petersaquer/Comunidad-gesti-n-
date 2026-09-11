@@ -129,6 +129,22 @@ EXPEDIENTE INDERT PRINCIPAL: ${settings.indertExpedienteNumber || '4821/2024'}
 FECHA DE EMISIÓN DEL LEGAJO: ${formatParaguayDate()}
 ================================================================================
 
+FUNDAMENTACIÓN JURÍDICA Y MARCO LEGAL VIGENTE (REPÚBLICA DEL PARAGUAY):
+1. CONSTITUCIÓN NACIONAL (1992):
+   - Art. 42: Libertad inalienable de libre asociación con fines comunitarios lícitos.
+   - Arts. 114 y 115: Reforma Agraria, fomento a la pequeña propiedad y arraigo familiar.
+2. ESTATUTO AGRARIO (LEY N° 1863/2002 Y LEY N° 2419/2004 - INDERT):
+   - Reconocimiento de las Comisiones Vecinales como interlocutoras comunitarias válidas.
+   - Art. 56: Prohibición de venta especulativa de tierras del Estado. La Comisión NO vende
+     tierras; únicamente administra aportes para mensuras, caños y trámites de regularización.
+3. LEY N° 3966/2010 ORGÁNICA MUNICIPAL:
+   - Reconocimiento de personería por Resolución Municipal para gestión de caminos y obras.
+4. CÓDIGO CIVIL PARAGUAYO (ART. 1909 Y CONC.):
+   - Tutela jurídica de la posesión pacífica, pública y de buena fe de las familias censadas.
+5. VALIDEZ DE CUOTAS Y SANCIONES ASAMBLEARIAS:
+   - Las cuotas sociales y multas aprobadas por la Asamblea Soberana son legítimas y obligatorias.
+
+================================================================================
 ÍNDICE CONSOLIDADO DE EXPEDIENTES, MENSURAS, FACTURAS Y RENDICIONES DE GASTOS:
 --------------------------------------------------------------------------------
 ${documents

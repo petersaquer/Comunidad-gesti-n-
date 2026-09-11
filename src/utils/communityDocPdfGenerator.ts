@@ -115,7 +115,7 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
     { align: 'center' }
   );
   doc.text(
-    'Manual oficial: Requisitos de postulación, prioridades sociales, plazos de aprobación y derechos.',
+    'Manual oficial: Respaldo jurídico paraguayo, requisitos de postulación, prioridades sociales y derechos.',
     pageWidth / 2,
     currentY + 27,
     { align: 'center' }
@@ -287,16 +287,24 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
 
   const legalItems = [
     {
-      law: 'Constitucion Nacional del Paraguay (Arts. 114 y 115):',
-      desc: 'Reforma Agraria, fomento a la pequeña propiedad y derecho a la vivienda digna para familias rurales y urbanas.',
+      law: 'Constitucion Nacional del Paraguay (Arts. 42, 114 y 115):',
+      desc: 'Libertad de asociacion pacifica (Art. 42), Reforma Agraria, fomento a la propiedad familiar y arraigo de los pobladores en asentamientos reconocidos por el Estado (Arts. 114 y 115).',
     },
     {
       law: 'Ley N° 1863/02 "Estatuto Agrario" y Ley N° 2419/04 (INDERT):',
-      desc: 'Define beneficiarios, acreditacion de arraigo ininterrumpido y prohibicion expresa de especulacion o reventa de lotes estatales.',
+      desc: 'Reconocimiento expreso de las comisiones vecinales pro-tierra como interlocutores validos para organizar censos, tramitar expedientes de mensura y canalizar adjudicaciones familiares con prohibicion de lucro especulativo.',
     },
     {
-      law: 'Codigo Civil Paraguayo (Art. 1909 y conc.):',
-      desc: 'Proteccion juridica de la posesion pacifica, publica y de buena fe de quienes habitan e introducen mejoras.',
+      law: 'Ley N° 3966/2010 Orgánica Municipal (Comisiones Vecinales):',
+      desc: 'Reconocimiento juridico de las comisiones mediante Resolucion de la Intendencia Municipal, otorgando personeria para gestionar apertura de caminos, red de agua potable y electrificacion (ANDE).',
+    },
+    {
+      law: 'Codigo Civil Paraguayo (Art. 1909 y conc. - Posesion de Hecho):',
+      desc: 'Tutela legal a la posesion pacifica, publica y continuada de quienes habitan e introducen mejoras. El padron digital y las constancias emitidas constituyen prueba documental de arraigo efectivo.',
+    },
+    {
+      law: 'Validez Legal de Cuotas, Multas por Inasistencia y Manejo Interno:',
+      desc: 'Las cuotas para mensura/obras y las multas por falta a asambleas/faenas son 100% legales por emanar de la Asamblea Soberana (Art. 42 CN). Todo ingreso es publico con recibo digital numerado.',
     },
   ];
 
@@ -321,6 +329,30 @@ export const generateCommunityGuidePdf = (settings: CommunitySettings): jsPDF =>
     doc.text(splitL, margin + 3, currentY + 7.6);
     currentY += boxHeight + 2;
   });
+
+  // Recuadro de Dictamen de Legalidad y Límites Claros para Autoridades y Vecinos
+  const legalVerdictText =
+    'DICTAMEN OFICIAL: Este sistema digital y el manejo interno de la Comision Vecinal son 100% LEGALES bajo el marco juridico paraguayo. La comision ejerce legitimamente la representacion comunitaria, el censo y la custodia de cuotas sociales para obras y mensuras. En estricto cumplimiento del Art. 56 del Estatuto Agrario (Ley 1863/02), la Comision NO VENDE tierras del Estado; el cobro corresponde exclusivamente a gastos de gestion comunal y la adjudicacion definitiva es potestad exclusiva del I.N.D.E.R.T.';
+  const splitVerdict = doc.splitTextToSize(legalVerdictText, contentWidth - 8);
+  const verdictHeight = 8 + splitVerdict.length * 3.3;
+  checkPageBreak(verdictHeight + 2, pageNumRef);
+
+  doc.setFillColor(240, 253, 244);
+  doc.roundedRect(margin, currentY, contentWidth, verdictHeight, 1.8, 1.8, 'F');
+  doc.setDrawColor(134, 239, 172);
+  doc.roundedRect(margin, currentY, contentWidth, verdictHeight, 1.8, 1.8, 'D');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7.4);
+  doc.setTextColor(21, 128, 61);
+  doc.text('✓ CONSTANCIA DE VALIDEZ JURIDICA Y TRANSPARENCIA ANTE EL ESTADO:', margin + 4, currentY + 4.5);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(6.8);
+  doc.setTextColor(20, 83, 45);
+  doc.text(splitVerdict, margin + 4, currentY + 8.2);
+
+  currentY += verdictHeight + 3;
 
   // ==========================================
   // PAGE 3: BLINDAJE ANTI-FRAUDE, DERECHOS Y DEBERES

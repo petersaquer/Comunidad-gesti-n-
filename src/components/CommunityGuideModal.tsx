@@ -1339,6 +1339,52 @@ export const CommunityGuideModal: React.FC<CommunityGuideModalProps> = ({
                 </p>
               </div>
 
+              {/* Box 2.5: Respaldo Jurídico y Leyes del Paraguay */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-blue-50/90 border-2 border-blue-300 space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-[#1877F2] text-white flex items-center justify-center shrink-0 shadow-xs font-black">
+                    <Scale className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs sm:text-sm font-black text-blue-950 uppercase tracking-wide">
+                      Respaldo Jurídico: ¿Por qué es 100% Legal Nuestro Manejo Comunitario?
+                    </h3>
+                    <p className="text-[11px] text-blue-900/90 leading-relaxed mt-0.5">
+                      Nuestra organización no actúa de forma improvisada ni clandestina. Las leyes paraguayas amparan formalmente a la Comisión Vecinal y a este sistema:
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 text-[11px]">
+                  <div className="p-2.5 rounded-xl bg-white border border-blue-200">
+                    <strong className="text-blue-950 block font-black">• Constitución Nacional (Arts. 42, 114 y 115):</strong>
+                    <span className="text-slate-600">Garantiza el derecho a asociarse en comisiones vecinales y el mandato estatal de radicar familias y regularizar asentamientos.</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-white border border-blue-200">
+                    <strong className="text-blue-950 block font-black">• Estatuto Agrario (Ley 1863/02 & Ley 2419/04):</strong>
+                    <span className="text-slate-600">Reconoce a las comisiones como interlocutoras ante el INDERT para censos, mensura y adjudicación de parcelas.</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-white border border-blue-200">
+                    <strong className="text-blue-950 block font-black">• Ley N° 3966/10 Orgánica Municipal:</strong>
+                    <span className="text-slate-600">Reconocimiento por Resolución de Intendencia para gestionar obras de agua corriente, caminos y luz eléctrica (ANDE).</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-white border border-blue-200">
+                    <strong className="text-blue-950 block font-black">• Código Civil Paraguayo (Art. 1909):</strong>
+                    <span className="text-slate-600">Tutela legal a la posesión pacífica y de buena fe. El padrón digital y constancias son prueba documental fehaciente de arraigo.</span>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-white/80 border border-blue-200 text-[11px] space-y-1.5">
+                  <div className="font-black text-slate-900 flex items-center gap-1.5">
+                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span>Cuotas Sociales y Multas por Inasistencia: Plenamente Legales</span>
+                  </div>
+                  <p className="text-slate-600 leading-relaxed">
+                    Al amparo del derecho asociativo, las decisiones tomadas en <strong>Asamblea General Soberana</strong> son de acatamiento obligatorio. Quien no asiste a faenas o asambleas compensa económicamente a la caja comunal para contratar relevos. La comisión <strong>NUNCA vende tierras fiscales</strong> (delito de estafa); únicamente administra aportes para gastos de mensura, caños y trámites de regularización.
+                  </p>
+                </div>
+              </div>
+
               {/* Box 3: Términos y Condiciones */}
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
                 <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
