@@ -33,6 +33,8 @@ import {
   Copy,
   CheckCheck,
   BookOpen,
+  Printer,
+  FileSpreadsheet,
 } from 'lucide-react';
 import {
   CommunitySettings,
@@ -50,6 +52,11 @@ import {
 } from '../types';
 import { downloadCompleteJSONBackup, parseAndValidateJSONBackup } from '../utils/backupUtils';
 import { downloadCommunityGuidePdf } from '../utils/communityDocPdfGenerator';
+import {
+  exportCommissionConstitutionActPDF,
+  exportIndertOfficialCensusPDF,
+  exportCadastralRegistryToExcel,
+} from '../utils/exportUtils';
 import {
   fetchSQLiteStats,
   runSQLQuery,
@@ -859,6 +866,55 @@ export const AdminSettingsTab: React.FC<AdminSettingsTabProps> = ({
                 <Download className="w-3.5 h-3.5 text-amber-400" />
                 <span>Descargar PDF</span>
               </button>
+            </div>
+
+            {/* Official Commission & INDERT Institutional Documents Card */}
+            <div className="mt-6 p-4 rounded-xl bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-[#1877F2] text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <Landmark className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-black text-slate-900">
+                    Documentos Oficiales para la Comisión Vecinal, I.N.D.E.R.T. y Municipalidad
+                  </h4>
+                  <p className="text-[11px] text-slate-600 mt-0.5">
+                    Genere los documentos jurídicos y censales 100% compatibles con los requisitos de mesa de entrada del INDERT para el Asentamiento <strong>{formData.communityName || 'La Floresta 2'}</strong>.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 border-t border-blue-200/60">
+                <button
+                  type="button"
+                  id="btn-admin-acta-comision"
+                  onClick={() => exportCommissionConstitutionActPDF(formData, users)}
+                  className="px-3.5 py-2.5 bg-white hover:bg-blue-50 text-[#1877F2] font-bold text-xs rounded-xl border border-blue-300 shadow-2xs transition-all cursor-pointer flex items-center justify-center gap-2 text-center"
+                >
+                  <FileText className="w-4 h-4 shrink-0 text-blue-600" />
+                  <span>Acta Constitutiva Comisión (PDF)</span>
+                </button>
+
+                <button
+                  type="button"
+                  id="btn-admin-censo-indert"
+                  onClick={() => exportIndertOfficialCensusPDF(residents, formData, currentUser)}
+                  className="px-3.5 py-2.5 bg-white hover:bg-emerald-50 text-emerald-700 font-bold text-xs rounded-xl border border-emerald-300 shadow-2xs transition-all cursor-pointer flex items-center justify-center gap-2 text-center"
+                >
+                  <Printer className="w-4 h-4 shrink-0 text-emerald-600" />
+                  <span>Planilla Oficial INDERT (PDF A4)</span>
+                </button>
+
+                <button
+                  type="button"
+                  id="btn-admin-catastro-excel"
+                  onClick={() => exportCadastralRegistryToExcel(residents, formData)}
+                  className="px-3.5 py-2.5 bg-white hover:bg-purple-50 text-purple-700 font-bold text-xs rounded-xl border border-purple-300 shadow-2xs transition-all cursor-pointer flex items-center justify-center gap-2 text-center"
+                >
+                  <FileSpreadsheet className="w-4 h-4 shrink-0 text-purple-600" />
+                  <span>Catastro Comunal (Excel)</span>
+                </button>
+              </div>
             </div>
 
             <div className="mt-6 flex justify-end">

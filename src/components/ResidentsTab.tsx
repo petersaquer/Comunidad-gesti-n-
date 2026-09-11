@@ -20,6 +20,8 @@ import {
   Users,
   MapPin,
   Lock,
+  Printer,
+  Landmark,
 } from 'lucide-react';
 import {
   Resident,
@@ -30,7 +32,11 @@ import {
   LandRequestStatus,
   UserAccount,
 } from '../types';
-import { exportResidentsToExcel } from '../utils/exportUtils';
+import {
+  exportResidentsToExcel,
+  exportIndertOfficialCensusPDF,
+  exportCadastralRegistryToExcel,
+} from '../utils/exportUtils';
 import { openWhatsApp } from '../utils/notificationUtils';
 import { formatGuaranies } from '../utils/currency';
 import {
@@ -263,13 +269,33 @@ export const ResidentsTab: React.FC<ResidentsTabProps> = ({
                   </button>
                 )}
                 {(isAdmin || currentUser?.permissions?.canExportReports) && (
-                  <button
-                    onClick={handleExportExcel}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold rounded-lg border border-slate-300 transition-colors cursor-pointer"
-                  >
-                    <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-                    Exportar Padrón Excel
-                  </button>
+                  <>
+                    <button
+                      id="btn-print-indert-pdf"
+                      onClick={() => exportIndertOfficialCensusPDF(residents, settings, currentUser)}
+                      className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold rounded-lg border border-emerald-300 transition-colors cursor-pointer"
+                      title="Imprimir Planilla Oficial INDERT en PDF (A4 Horizontal)"
+                    >
+                      <Printer className="w-4 h-4 text-emerald-600" />
+                      Planilla INDERT (PDF)
+                    </button>
+                    <button
+                      id="btn-export-catastro-excel"
+                      onClick={() => exportCadastralRegistryToExcel(residents, settings)}
+                      className="inline-flex items-center gap-1.5 px-3 py-2 bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-semibold rounded-lg border border-purple-300 transition-colors cursor-pointer"
+                      title="Exportar Catastro Comunal de Lotes y Manzanas"
+                    >
+                      <FileSpreadsheet className="w-4 h-4 text-purple-600" />
+                      Catastro (Excel)
+                    </button>
+                    <button
+                      onClick={handleExportExcel}
+                      className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold rounded-lg border border-slate-300 transition-colors cursor-pointer"
+                    >
+                      <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+                      Padrón Excel
+                    </button>
+                  </>
                 )}
                 {(isAdmin || currentUser?.permissions?.canManageResidents) && (
                   <button

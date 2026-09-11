@@ -102,7 +102,18 @@ export const getInitialAppState = () => {
     expenses: loadData<Expense[]>(STORAGE_KEYS.EXPENSES, initialExpenses),
     shifts: loadData<MaintenanceShift[]>(STORAGE_KEYS.SHIFTS, initialShifts),
     incidents: loadData<Incident[]>(STORAGE_KEYS.INCIDENTS, initialIncidents),
-    settings: loadData<CommunitySettings>(STORAGE_KEYS.SETTINGS, initialSettings),
+    settings: (() => {
+      let s = loadData<CommunitySettings>(STORAGE_KEYS.SETTINGS, initialSettings);
+      if (!s.communityName || s.communityName.includes('Sector 16') || s.settlementLocation?.includes('Quebrada Alta')) {
+        s = {
+          ...s,
+          communityName: 'Comisión Vecinal Pro-Tierra Asentamiento "La Floresta 2"',
+          settlementLocation: 'Asentamiento La Floresta 2, Finca Matriz INDERT',
+        };
+        saveData(STORAGE_KEYS.SETTINGS, s);
+      }
+      return s;
+    })(),
     users,
     currentUser,
     indertDocs: loadData<IndertDocument[]>(STORAGE_KEYS.INDERT_DOCS, initialIndertDocuments),
