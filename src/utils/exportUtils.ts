@@ -11,6 +11,10 @@ import {
 import { formatGuaranies } from './currency';
 import { maskDocumentId, maskPhoneNumber, canViewSensitiveResidentData } from './privacyUtils';
 import { formatParaguayDate, formatParaguayDateTime } from './paraguayDate';
+import { generateMonthlyBalancePDF } from './monthlyBalancePdfGenerator';
+import { generateMeetingAttendancePDF } from './meetingAttendancePdfGenerator';
+
+export { generateMonthlyBalancePDF, generateMeetingAttendancePDF };
 
 // Export to Excel: Balance Financiero Mensual
 export const exportFinancialBalanceToExcel = (
@@ -149,140 +153,21 @@ export const exportResidentsToExcel = (
   XLSX.writeFile(wb, `Padron_Residentes_${settings.communityName.replace(/\s+/g, '_')}.xlsx`);
 };
 
-// Export to PDF: Balance Financiero y Estado de Cuentas
+// Export to PDF: Balance Financiero y Estado de Cuentas Oficial
 export const exportFinancialBalanceToPDF = (
   month: string,
   contributions: Contribution[],
   expenses: Expense[],
-  settings: CommunitySettings
+  settings: CommunitySettings,
+  residents?: Resident[]
 ) => {
-  const doc = new jsPDF();
-  const monthContributions = contributions.filter((c) => c.month === month);
-  const monthExpenses = expenses.filter((e) => e.month === month);
-
-  const totalIncomes = monthContributions.filter((c) => c.status === 'paid').reduce((acc, c) => acc + c.amountPaid, 0);
-  const totalUnderReview = monthContributions.filter((c) => c.status === 'pending' && c.amountPaid > 0).reduce((acc, c) => acc + c.amountPaid, 0);
-  const totalExpensesPaid = monthExpenses.filter((e) => e.status === 'paid').reduce((acc, e) => acc + e.amount, 0);
-  const totalExpensesPending = monthExpenses.filter((e) => e.status === 'pending').reduce((acc, e) => acc + e.amount, 0);
-  const balance = totalIncomes - totalExpensesPaid;
-
-  // Header
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(16);
-  doc.text(settings.communityName, 14, 20);
-
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.text(`Ubicación: ${settings.settlementLocation}`, 14, 26);
-  doc.text(`Balance Financiero Oficial - Período: ${month}`, 14, 32);
-  doc.text(`Fecha de Emisión: ${formatParaguayDate()}`, 14, 38);
-
-  // Line divider
-  doc.setDrawColor(200, 200, 200);
-  doc.line(14, 42, 196, 42);
-
-  // Summary box
-  doc.setFillColor(245, 247, 250);
-  doc.rect(14, 46, 182, 36, 'F');
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(10);
-  doc.text(`Total Recaudado Efectivo (Conciliado): ${formatGuaranies(totalIncomes)}`, 20, 53);
-  doc.text(`Total Pagos en Revisión por Tesorería: ${formatGuaranies(totalUnderReview)}`, 20, 59);
-  doc.text(`Total Gastos Pagados Efectivamente: ${formatGuaranies(totalExpensesPaid)} (Pendientes: ${formatGuaranies(totalExpensesPending)})`, 20, 65);
-
-  doc.setTextColor(balance >= 0 ? 22 : 180, balance >= 0 ? 101 : 40, balance >= 0 ? 52 : 40);
-  doc.text(`Saldo Líquido en Caja: ${formatGuaranies(balance)}`, 20, 73);
-  doc.setTextColor(0, 0, 0);
-
-  let currentY = 88;
-
-  // Section 1: Desglose Gastos
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(12);
-  doc.text('1. Gastos Comunitarios del Mes (Luz, Agua, Obras, Admin)', 14, currentY);
-  currentY += 6;
-
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Concepto / Proveedor', 14, currentY);
-  doc.text('Categoría', 105, currentY);
-  doc.text('Comprobante', 140, currentY);
-  doc.text('Monto', 180, currentY);
-  currentY += 4;
-  doc.line(14, currentY, 196, currentY);
-  currentY += 5;
-
-  doc.setFont('helvetica', 'normal');
-  monthExpenses.slice(0, 10).forEach((exp) => {
-    if (currentY > 260) {
-      doc.addPage();
-      currentY = 20;
-    }
-    doc.text(exp.title.substring(0, 48), 14, currentY);
-    doc.text(exp.category.toUpperCase(), 105, currentY);
-    doc.text(exp.receiptOrInvoice.substring(0, 15), 140, currentY);
-    doc.text(`${formatGuaranies(exp.amount)}`, 175, currentY);
-    currentY += 6;
+  generateMonthlyBalancePDF({
+    month,
+    contributions,
+    expenses,
+    residents,
+    settings,
   });
-
-  currentY += 6;
-
-  // Section 2: Resumen de Aportes de Residentes
-  if (currentY > 220) {
-    doc.addPage();
-    currentY = 20;
-  }
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(12);
-  doc.text('2. Aportes de Residentes (Luz, Agua, Cuotas)', 14, currentY);
-  currentY += 6;
-
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Residente / Lote', 14, currentY);
-  doc.text('Concepto', 90, currentY);
-  doc.text('Estado', 150, currentY);
-  doc.text('Pagado', 180, currentY);
-  currentY += 4;
-  doc.line(14, currentY, 196, currentY);
-  currentY += 5;
-
-  doc.setFont('helvetica', 'normal');
-  monthContributions.slice(0, 12).forEach((c) => {
-    if (currentY > 260) {
-      doc.addPage();
-      currentY = 20;
-    }
-    doc.text(`${c.residentName.substring(0, 30)} (Mz ${c.block}-L${c.lot})`, 14, currentY);
-    doc.text(c.concept.substring(0, 28), 90, currentY);
-    doc.text(c.status === 'paid' ? 'PAGADO' : c.status === 'partial' ? 'PARCIAL' : 'PENDIENTE', 150, currentY);
-    doc.text(`${formatGuaranies(c.amountPaid)}`, 175, currentY);
-    currentY += 6;
-  });
-
-  // Signatures
-  if (currentY > 230) {
-    doc.addPage();
-    currentY = 40;
-  } else {
-    currentY = Math.max(currentY + 20, 240);
-  }
-
-  doc.setDrawColor(150, 150, 150);
-  doc.line(30, currentY, 90, currentY);
-  doc.line(120, currentY, 180, currentY);
-
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'bold');
-  doc.text(settings.presidentName, 40, currentY + 5);
-  doc.text('Presidente de la Comunidad', 35, currentY + 10);
-
-  doc.text(settings.treasurerName, 130, currentY + 5);
-  doc.text('Tesorero/a Comunal', 135, currentY + 10);
-
-  doc.save(`Balance_Oficial_${month}_${settings.communityName.replace(/\s+/g, '_')}.pdf`);
 };
 
 // Export Individual Resident Account Statement to PDF

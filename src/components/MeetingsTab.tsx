@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { 
   Users, Plus, QrCode, Calendar as CalendarIcon, 
   MapPin, Clock, Search, ExternalLink, X, ShieldAlert,
-  CheckCircle2, Download
+  CheckCircle2, Download, FileText
 } from 'lucide-react';
 import { Meeting, Resident, CommunitySettings, UserAccount } from '../types';
 import { Html5QrcodeScanner, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { AttendanceKPIs } from './AttendanceKPIs';
 import * as XLSX from 'xlsx';
+import { generateMeetingAttendancePDF } from '../utils/meetingAttendancePdfGenerator';
 import { 
   formatParaguayDate, 
   formatParaguayTime, 
@@ -38,9 +39,26 @@ export const MeetingsTab: React.FC<MeetingsTabProps> = ({
   
   const [newTitle, setNewTitle] = useState('');
   const [newDate, setNewDate] = useState('');
+  const [generatingPdfId, setGeneratingPdfId] = useState<string | null>(null);
   
   const activeMeetings = meetings.filter(m => m.status === 'active');
   const pastMeetings = meetings.filter(m => m.status === 'completed' || m.status === 'scheduled').sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  // Handle PDF Export for meeting attendance
+  const handleExportPDF = (meeting: Meeting) => {
+    try {
+      setGeneratingPdfId(meeting.id);
+      generateMeetingAttendancePDF({
+        meeting,
+        residents,
+        settings,
+      });
+    } catch (err) {
+      console.error('Error al exportar acta de reunión en PDF:', err);
+    } finally {
+      setGeneratingPdfId(null);
+    }
+  };
 
   // Handle WhatsApp notification
   const handleNotifyWhatsApp = (meeting: Meeting) => {
@@ -160,16 +178,30 @@ export const MeetingsTab: React.FC<MeetingsTabProps> = ({
           </div>
           
           <div className="flex flex-wrap items-center gap-3">
+            {meetings.length > 0 && (
+              <button
+                onClick={() => {
+                  const target = activeMeetings[0] || pastMeetings[0];
+                  if (target) handleExportPDF(target);
+                }}
+                disabled={generatingPdfId !== null}
+                className="flex-1 md:flex-none px-4 py-2.5 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-700 text-white text-sm font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+                title="Descargar Acta Oficial de Asistencia y Quórum en PDF"
+              >
+                <FileText className="w-4 h-4 text-emerald-400" />
+                <span>{generatingPdfId !== null ? 'Generando PDF...' : 'Descargar Acta en PDF'}</span>
+              </button>
+            )}
             <button
               onClick={() => setIsScannerOpen(true)}
-              className="flex-1 md:flex-none px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
+              className="flex-1 md:flex-none px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
             >
               <QrCode className="w-5 h-5" />
               Escanear QR
             </button>
             <button
               onClick={() => setIsNewMeetingModalOpen(true)}
-              className="flex-1 md:flex-none px-4 py-2.5 bg-[#1877F2] hover:bg-blue-600 text-white text-sm font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2"
+              className="flex-1 md:flex-none px-4 py-2.5 bg-[#1877F2] hover:bg-blue-600 text-white text-sm font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
             >
               <Plus className="w-5 h-5" />
               Nueva Reunión
@@ -221,16 +253,25 @@ export const MeetingsTab: React.FC<MeetingsTabProps> = ({
                       Asistencias registradas: <span className="font-bold text-slate-800">{mtg.attendees.length}</span> residentes
                     </p>
                   </div>
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col sm:flex-row md:flex-col gap-2">
                     <button 
                       onClick={() => setIsScannerOpen(true)}
-                      className="px-4 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold text-sm rounded-xl transition-colors flex items-center justify-center gap-2"
+                      className="px-4 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold text-sm rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <QrCode className="w-4 h-4" /> Seguir Escaneando
                     </button>
+                    <button
+                      onClick={() => handleExportPDF(mtg)}
+                      disabled={generatingPdfId === mtg.id}
+                      className="px-4 py-2 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-700 text-white font-bold text-sm rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed shadow-xs"
+                      title="Descargar Acta Oficial de Asistencia y Quórum en PDF"
+                    >
+                      <FileText className="w-4 h-4 text-emerald-400" />
+                      <span>{generatingPdfId === mtg.id ? 'Generando PDF...' : 'Descargar Acta en PDF'}</span>
+                    </button>
                     <button 
                       onClick={() => endMeeting(mtg.id)}
-                      className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition-colors"
+                      className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition-colors cursor-pointer"
                     >
                       Finalizar Reunión
                     </button>
@@ -276,13 +317,25 @@ export const MeetingsTab: React.FC<MeetingsTabProps> = ({
                 </div>
                 
                 <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleExportPDF(mtg)}
+                    disabled={generatingPdfId === mtg.id}
+                    className="p-2 text-slate-800 hover:bg-slate-100 disabled:text-slate-400 rounded-xl transition-colors tooltip-trigger flex items-center gap-1.5 font-bold text-xs border border-slate-300 cursor-pointer shadow-2xs"
+                    title="Descargar Acta Oficial de Asistencia y Quórum en PDF"
+                  >
+                    <FileText className="w-4 h-4 text-emerald-600" />
+                    <span className="hidden sm:inline">
+                      {generatingPdfId === mtg.id ? 'Generando...' : 'Acta PDF'}
+                    </span>
+                  </button>
                   {mtg.status === 'completed' && (
                     <button
                       onClick={() => exportToExcel(mtg)}
-                      className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-colors tooltip-trigger"
-                      title="Descargar Acta (Excel)"
+                      className="p-2 text-emerald-700 hover:bg-emerald-50 rounded-xl transition-colors tooltip-trigger flex items-center gap-1.5 font-bold text-xs border border-emerald-200 cursor-pointer"
+                      title="Descargar Planilla en Excel (.xlsx)"
                     >
-                      <Download className="w-5 h-5" />
+                      <Download className="w-4 h-4" />
+                      <span className="hidden sm:inline">Excel</span>
                     </button>
                   )}
                   {mtg.status === 'scheduled' && (

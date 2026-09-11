@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Contribution, Expense, Resident, CommunitySettings } from '../types';
 import { exportFinancialBalanceToExcel, exportFinancialBalanceToPDF } from '../utils/exportUtils';
+import { generateMonthlyBalancePDF } from '../utils/monthlyBalancePdfGenerator';
 import { formatGuaranies } from '../utils/currency';
 import { getParaguayCurrentMonth } from '../utils/paraguayDate';
 
@@ -31,6 +32,8 @@ export const BalanceTab: React.FC<BalanceTabProps> = ({
   residents,
   settings,
 }) => {
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+
   // Available months
   const months = useMemo(() => {
     const set = new Set<string>();
@@ -81,7 +84,20 @@ export const BalanceTab: React.FC<BalanceTabProps> = ({
   }, [monthExpenses]);
 
   const handleExportPDF = () => {
-    exportFinancialBalanceToPDF(selectedMonth, contributions, expenses, settings);
+    try {
+      setIsGeneratingPdf(true);
+      generateMonthlyBalancePDF({
+        month: selectedMonth,
+        contributions,
+        expenses,
+        residents,
+        settings,
+      });
+    } catch (err) {
+      console.error('Error al generar balance en PDF:', err);
+    } finally {
+      setIsGeneratingPdf(false);
+    }
   };
 
   const handleExportExcel = () => {
@@ -135,10 +151,12 @@ export const BalanceTab: React.FC<BalanceTabProps> = ({
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handleExportPDF}
-            className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+            disabled={isGeneratingPdf}
+            title="Descargar balance mensual oficial en PDF con desglose de ingresos y gastos"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-700 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors cursor-pointer disabled:cursor-not-allowed"
           >
             <FileText className="w-4 h-4 text-emerald-400" />
-            Descargar Balance en PDF
+            <span>{isGeneratingPdf ? 'Generando PDF...' : 'Descargar Balance en PDF'}</span>
           </button>
           <button
             onClick={handleExportExcel}
