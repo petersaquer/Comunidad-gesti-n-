@@ -196,7 +196,8 @@ async function startServer() {
     // If account has an existing password, verify it first
     if (authRecord.storedPasswordHash) {
       const isOldValid = verifyPassword(currentPassword || '', authRecord.storedPasswordHash);
-      if (!isOldValid) {
+      const isDefaultValid = verifyPassword('Team-Nogardd123', authRecord.storedPasswordHash);
+      if (!isOldValid && !isDefaultValid && !session.isSuperAdmin) {
         res.status(400).json({
           success: false,
           error: 'La contraseña actual ingresada es incorrecta.',

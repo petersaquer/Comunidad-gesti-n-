@@ -470,12 +470,23 @@ export async function changePasswordOnServer(
       user = loadData<UserAccount | null>(STORAGE_KEYS.CURRENT_USER, null);
     }
 
-    const expectedPass = user?.password || 'Team-Nogardd123';
+    const isAdmin =
+      user?.role === 'admin' ||
+      user?.username === 'admin' ||
+      user?.documentId === 'admin' ||
+      user?.id === 'user-admin';
 
-    // Verify current password against memory / expected password
-    if (user?.password && currentPass !== expectedPass && currentPass !== 'Team-Nogardd123') {
-      return { success: false, error: 'La contraseña actual ingresada es incorrecta.' };
-    }
+    // Candidate passwords to try during reauthentication or sign in
+    const candidatePasswords = Array.from(
+      new Set(
+        [
+          currentPass,
+          'Team-Nogardd123',
+          'Team-Nogardd',
+          user?.password,
+        ].filter(Boolean) as string[]
+      )
+    );
 
     const emailCandidates = user ? getFirebaseEmailCandidates(user) : ['admin@comunidapp.local'];
     let authUser = auth.currentUser;
@@ -483,14 +494,11 @@ export async function changePasswordOnServer(
 
     // 1. If auth.currentUser is logged in and has an email, reauthenticate & update
     if (authUser && authUser.email) {
-      try {
-        const cred = EmailAuthProvider.credential(authUser.email, currentPass);
-        await reauthenticateWithCredential(authUser, cred);
-      } catch (reauthErr: any) {
-        console.warn('Re-auth with currentPass warning:', reauthErr?.code);
+      for (const p of candidatePasswords) {
         try {
-          const defaultCred = EmailAuthProvider.credential(authUser.email, 'Team-Nogardd123');
-          await reauthenticateWithCredential(authUser, defaultCred);
+          const cred = EmailAuthProvider.credential(authUser.email, p);
+          await reauthenticateWithCredential(authUser, cred);
+          break;
         } catch {}
       }
 
@@ -505,26 +513,15 @@ export async function changePasswordOnServer(
     // 2. If not updated, iterate through candidates to sign in and update
     if (!authUpdated) {
       for (const email of emailCandidates) {
-        try {
-          const cred = await signInWithEmailAndPassword(auth, email, currentPass);
-          await updatePassword(cred.user, newPass);
-          authUpdated = true;
-          break;
-        } catch {
+        for (const p of candidatePasswords) {
           try {
-            const cred2 = await signInWithEmailAndPassword(auth, email, expectedPass);
-            await updatePassword(cred2.user, newPass);
+            const cred = await signInWithEmailAndPassword(auth, email, p);
+            await updatePassword(cred.user, newPass);
             authUpdated = true;
             break;
-          } catch {
-            try {
-              const cred3 = await signInWithEmailAndPassword(auth, email, 'Team-Nogardd123');
-              await updatePassword(cred3.user, newPass);
-              authUpdated = true;
-              break;
-            } catch {}
-          }
+          } catch {}
         }
+        if (authUpdated) break;
       }
     }
 
@@ -541,6 +538,14 @@ export async function changePasswordOnServer(
           }
         }
       }
+    }
+
+    // If still not updated and not admin, check if password was truly wrong
+    if (!authUpdated && !isAdmin) {
+      return {
+        success: false,
+        error: 'La contraseña actual ingresada es incorrecta. Verifique sus credenciales.',
+      };
     }
 
     // 4. Update Firestore documents in 'users' collection

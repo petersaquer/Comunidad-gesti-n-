@@ -49,12 +49,6 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
       return;
     }
 
-    const expectedPass = currentUser.password || 'Team-Nogardd123';
-    if (currentUser.password && currentPassword !== expectedPass && currentPassword !== 'Team-Nogardd123') {
-      setError('La contraseña actual ingresada es incorrecta.');
-      return;
-    }
-
     // 2. Validate new password
     if (!newPassword.trim()) {
       setError('La nueva contraseña no puede estar vacía.');
@@ -66,7 +60,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
       return;
     }
 
-    if (newPassword === currentPassword) {
+    if (newPassword.trim() === currentPassword.trim()) {
       setError('La nueva contraseña debe ser diferente a la contraseña actual.');
       return;
     }
