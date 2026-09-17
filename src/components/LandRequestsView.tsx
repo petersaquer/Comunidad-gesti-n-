@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { LandRequest, LandRequestStatus, Resident, CommunitySettings } from '../types';
 import { openWhatsApp } from '../utils/notificationUtils';
+import { maskDocumentId, maskPhone } from '../utils/privacyUtils';
 
 interface LandRequestsViewProps {
   requests: LandRequest[];
@@ -119,7 +120,7 @@ export const LandRequestsView: React.FC<LandRequestsViewProps> = ({
       missingDocsText
     );
     // Notify via WhatsApp
-    const msg = `Estimado/a ${missingDocsRequest.applicantName} (C.I. ${missingDocsRequest.documentId}):\nLe contactamos de la Comisión Vecinal del Sector 16. Su solicitud de terreno se encuentra en estado *FALTA DE DOCUMENTOS*:\n\n*Documentos pendientes:*\n${missingDocsText}\n\nFavor remitir a la directiva a la brevedad para regularizar su legajo.`;
+    const msg = `Estimado/a ${missingDocsRequest.applicantName} (C.I. ${maskDocumentId(missingDocsRequest.documentId)}):\nLe contactamos de la Comisión Vecinal del Sector 16. Su solicitud de terreno se encuentra en estado *FALTA DE DOCUMENTOS*:\n\n*Documentos pendientes:*\n${missingDocsText}\n\nFavor remitir a la directiva a la brevedad para regularizar su legajo.`;
     openWhatsApp(missingDocsRequest.phone, msg);
     setMissingDocsRequest(null);
   };
@@ -393,11 +394,11 @@ export const LandRequestsView: React.FC<LandRequestsViewProps> = ({
                       </span>
                     </div>
                     <div className="flex items-center gap-3 text-xs text-slate-500 font-medium mt-0.5 flex-wrap">
-                      <span className="font-mono">C.I. {req.documentId}</span>
+                      <span className="font-mono">C.I. {maskDocumentId(req.documentId)}</span>
                       <span>•</span>
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-1 font-mono">
                         <Phone className="w-3 h-3 text-slate-400" />
-                        {req.phone}
+                        {maskPhone(req.phone)}
                       </span>
                       <span>•</span>
                       <span>Solicitado: {req.requestDate}</span>
@@ -412,7 +413,7 @@ export const LandRequestsView: React.FC<LandRequestsViewProps> = ({
                       onClick={() =>
                         openWhatsApp(
                           req.phone,
-                          `Hola ${req.applicantName}, le contactamos de la directiva de tierras del Sector 16 respecto a su solicitud de terreno (C.I. ${req.documentId}).`
+                          `Hola ${req.applicantName}, le contactamos de la directiva de tierras del Sector 16 respecto a su solicitud de terreno (C.I. ${maskDocumentId(req.documentId)}).`
                         )
                       }
                       title="Contactar por WhatsApp"
@@ -513,7 +514,7 @@ export const LandRequestsView: React.FC<LandRequestsViewProps> = ({
                   {req.phone && (
                     <button
                       onClick={() => {
-                        const msg = `Estimado/a ${req.applicantName} (C.I. ${req.documentId}):\nLe recordamos que para avanzar con la adjudicación de su lote en el Sector 16, aún faltan estos documentos:\n\n*${req.missingDocumentsNotes}*\n\nFavor acercar a la directiva lo antes posible.`;
+                        const msg = `Estimado/a ${req.applicantName} (C.I. ${maskDocumentId(req.documentId)}):\nLe recordamos que para avanzar con la adjudicación de su lote en el Sector 16, aún faltan estos documentos:\n\n*${req.missingDocumentsNotes}*\n\nFavor acercar a la directiva lo antes posible.`;
                         openWhatsApp(req.phone, msg);
                       }}
                       className="px-2 py-1 rounded bg-blue-600 text-white font-bold text-[10px] hover:bg-blue-700 shrink-0 cursor-pointer"
@@ -635,7 +636,7 @@ export const LandRequestsView: React.FC<LandRequestsViewProps> = ({
 
             <p className="text-xs text-slate-600">
               Ingrese la Manzana y Lote oficiales que se le adjudicarán al postulante (C.I.{' '}
-              {approvingRequest.documentId}).
+              {maskDocumentId(approvingRequest.documentId)}).
             </p>
 
             <div className="grid grid-cols-2 gap-3">
@@ -723,7 +724,7 @@ export const LandRequestsView: React.FC<LandRequestsViewProps> = ({
 
             <p className="text-xs text-slate-600">
               Detalle los documentos que debe presentar el postulante para conformar su legajo. Al
-              confirmar, se le enviará un mensaje automático a su WhatsApp ({missingDocsRequest.phone}).
+              confirmar, se le enviará un mensaje automático a su WhatsApp ({maskPhone(missingDocsRequest.phone)}).
             </p>
 
             <div>

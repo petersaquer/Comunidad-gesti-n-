@@ -509,14 +509,10 @@ export const FinancesTab: React.FC<FinancesTabProps> = ({
                             </span>
                             <span>•</span>
                             <span>C.I.</span>
-                            {canViewSensitiveResidentData(currentUser, { documentId: c.documentId, block: c.block, lot: c.lot } as any) ? (
-                              <strong className="text-slate-700 font-mono">{c.documentId}</strong>
-                            ) : (
-                              <span className="font-mono text-slate-500 inline-flex items-center gap-0.5">
-                                <Lock className="w-2.5 h-2.5 text-slate-400" />
-                                {maskDocumentId(c.documentId, false)}
-                              </span>
-                            )}
+                            <span className="font-mono text-slate-600 font-bold inline-flex items-center gap-0.5">
+                              <Lock className="w-2.5 h-2.5 text-slate-400" />
+                              {maskDocumentId(c.documentId)}
+                            </span>
                           </div>
                         </td>
 

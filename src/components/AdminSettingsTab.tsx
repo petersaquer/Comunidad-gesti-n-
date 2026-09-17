@@ -879,7 +879,7 @@ export const AdminSettingsTab: React.FC<AdminSettingsTabProps> = ({
                     Documentos Oficiales para la Comisión Vecinal, I.N.D.E.R.T. y Municipalidad
                   </h4>
                   <p className="text-[11px] text-slate-600 mt-0.5">
-                    Genere los documentos jurídicos y censales 100% compatibles con los requisitos de mesa de entrada del INDERT para el Asentamiento <strong>{formData.communityName || 'La Floresta 2'}</strong>.
+                    Genere los documentos jurídicos y censales 100% compatibles con los requisitos de mesa de entrada del INDERT para el Asentamiento <strong>{formData.communityName || 'Madre Teresa de Calcuta'}</strong>.
                   </p>
                 </div>
               </div>

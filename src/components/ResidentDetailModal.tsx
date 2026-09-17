@@ -135,16 +135,12 @@ export const ResidentDetailModal: React.FC<ResidentDetailModalProps> = ({
               </div>
               <p className="text-xs text-blue-100 mt-0.5">
                 C.I. / Documento:{' '}
-                {canAccessSensitive ? (
-                  <span className="font-bold text-white">{resident.documentId}</span>
-                ) : (
-                  <span className="font-mono font-bold text-white/90">
-                    {maskDocumentId(resident.documentId, false)}
-                    <span className="ml-1.5 inline-flex items-center gap-0.5 text-[10px] bg-blue-900/80 text-blue-200 px-1.5 py-0.5 rounded font-sans">
-                      <Lock className="w-2.5 h-2.5 text-amber-300" /> Protegido
-                    </span>
+                <span className="font-mono font-bold text-white/90">
+                  {maskDocumentId(resident.documentId)}
+                  <span className="ml-1.5 inline-flex items-center gap-0.5 text-[10px] bg-blue-900/80 text-blue-200 px-1.5 py-0.5 rounded font-sans">
+                    <Lock className="w-2.5 h-2.5 text-amber-300" /> Protegido
                   </span>
-                )}{' '}
+                </span>{' '}
                 • Mz. <span className="font-bold text-white">{resident.block}</span> - Lote{' '}
                 <span className="font-bold text-white">{resident.lot}</span> ({resident.sector})
               </p>
@@ -221,29 +217,17 @@ export const ResidentDetailModal: React.FC<ResidentDetailModalProps> = ({
 
             <div>
               <span className="text-xs text-slate-500 block">Celular / WhatsApp</span>
-              {canAccessSensitive ? (
-                <>
-                  <span className="font-bold flex items-center gap-1 mt-0.5 text-slate-900">
-                    <Phone className="w-3.5 h-3.5 text-slate-400" />
-                    {resident.phone}
-                  </span>
-                  <button
-                    onClick={() => openWhatsApp(resident.phone, `Hola ${resident.fullName}, le contactamos de la directiva comunal del Sector 16.`)}
-                    className="text-[11px] text-emerald-700 hover:underline font-medium mt-0.5 inline-flex items-center gap-1 cursor-pointer"
-                  >
-                    <MessageCircle className="w-3 h-3" /> Contactar
-                  </button>
-                </>
-              ) : (
-                <>
-                  <span className="font-bold flex items-center gap-1 mt-0.5 text-slate-700 font-mono text-xs">
-                    <Lock className="w-3 h-3 text-slate-400" />
-                    {maskPhone(resident.phone, false)}
-                  </span>
-                  <span className="text-[10px] text-slate-400 block mt-0.5 italic">
-                    Reservado por privacidad
-                  </span>
-                </>
+              <span className="font-mono font-bold flex items-center gap-1 mt-0.5 text-slate-900 text-xs">
+                <Phone className="w-3.5 h-3.5 text-slate-400" />
+                {maskPhone(resident.phone)}
+              </span>
+              {resident.phone && (
+                <button
+                  onClick={() => openWhatsApp(resident.phone, `Hola ${resident.fullName}, le contactamos de la directiva comunal.`)}
+                  className="text-[11px] text-emerald-700 hover:underline font-medium mt-0.5 inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <MessageCircle className="w-3 h-3" /> Contactar WhatsApp
+                </button>
               )}
             </div>
 
@@ -300,7 +284,7 @@ export const ResidentDetailModal: React.FC<ResidentDetailModalProps> = ({
                         {resident.partnerName}
                       </span>
                       <span className="text-slate-500 font-mono text-[11px]">
-                        C.I. {resident.partnerDocumentId || 'S/N'}
+                        C.I. {maskDocumentId(resident.partnerDocumentId)}
                       </span>
                     </div>
                   ) : (

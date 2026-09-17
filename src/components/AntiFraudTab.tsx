@@ -11,6 +11,7 @@ import {
   Plus,
 } from 'lucide-react';
 import { Resident, CommunitySettings } from '../types';
+import { maskDocumentId } from '../utils/privacyUtils';
 
 interface AntiFraudTabProps {
   residents: Resident[];
@@ -139,7 +140,7 @@ export const AntiFraudTab: React.FC<AntiFraudTabProps> = ({
                       {searchResult.exactMatch.fullName}
                     </h5>
                     <p className="text-xs text-slate-600 font-mono mt-0.5">
-                      C.I.: <strong>{searchResult.exactMatch.documentId}</strong> • Asignado a Manzana{' '}
+                      C.I.: <strong>{maskDocumentId(searchResult.exactMatch.documentId)}</strong> • Asignado a Manzana{' '}
                       <strong>{searchResult.exactMatch.block}</strong> - Lote{' '}
                       <strong>{searchResult.exactMatch.lot}</strong>
                     </p>
@@ -193,7 +194,7 @@ export const AntiFraudTab: React.FC<AntiFraudTabProps> = ({
                     className="p-3 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-between text-xs"
                   >
                     <div>
-                      <span className="font-bold text-slate-900">{sim.fullName}</span> (C.I. {sim.documentId})
+                      <span className="font-bold text-slate-900">{sim.fullName}</span> (C.I. {maskDocumentId(sim.documentId)})
                       - Mz {sim.block} Lote {sim.lot}
                       <p className="text-[11px] text-slate-500 mt-0.5">{sim.previousSettlementHistory}</p>
                     </div>
@@ -250,7 +251,7 @@ export const AntiFraudTab: React.FC<AntiFraudTabProps> = ({
                   <tr key={r.id} className="hover:bg-rose-50/30 transition-colors">
                     <td className="py-3 px-3.5">
                       <div className="font-bold text-slate-900">{r.fullName}</div>
-                      <span className="font-mono text-slate-500 text-[11px]">C.I. {r.documentId}</span>
+                      <span className="font-mono text-slate-500 text-[11px]">C.I. {maskDocumentId(r.documentId)}</span>
                     </td>
 
                     <td className="py-3 px-3.5 font-bold text-slate-800">

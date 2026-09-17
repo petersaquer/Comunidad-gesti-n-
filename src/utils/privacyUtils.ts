@@ -7,7 +7,18 @@ import { UserAccount, Resident, LandRequest } from '../types';
 export function isAdministrativeUser(user?: UserAccount | null): boolean {
   if (!user) return false;
 
-  const adminRoles = ['admin', 'tesorera', 'secretaria', 'sindico', 'directiva'];
+  const adminRoles = [
+    'admin',
+    'vicepresidente',
+    'tesorera',
+    'subtesorera',
+    'secretaria',
+    'subsecretaria',
+    'sindico',
+    'sindico_suplente',
+    'directiva',
+    'vocal_suplente',
+  ];
   if (adminRoles.includes(user.role)) {
     return true;
   }
@@ -78,36 +89,49 @@ export function canViewSensitiveLandRequest(
 }
 
 /**
- * Masks a document number (C.I. / D.N.I.) for unauthorized viewers while keeping transparency.
- * Example: "4.821.902" -> "4.•••.902" or "4821902" -> "48•••02"
+ * Masks a document number (C.I. / D.N.I.) for privacy protection (Habeas Data).
+ * Rule: Exposes ONLY the last 3 digits, masking all preceding numbers.
+ * Example: "4.892.110" -> "•••.•••.110" | "3450982" -> "•••.•••.982"
  */
-export function maskDocumentId(docId?: string, hasPermission = false): string {
-  if (!docId) return 'S/N';
-  if (hasPermission) return docId;
+export function maskDocumentId(docId?: string, forceUnmask = false): string {
+  if (!docId) return 'S/D';
+  if (forceUnmask) return docId;
 
   const clean = docId.trim();
-  if (clean.length <= 4) return '••••';
+  if (clean.toLowerCase() === 'admin' || clean.toLowerCase() === 's/n' || clean.toLowerCase() === 's/d') {
+    return clean;
+  }
 
-  // Format nicely preserving initial and trailing characters
-  const start = clean.slice(0, 2);
-  const end = clean.slice(-2);
-  return `${start}••••${end}`;
+  const digits = clean.replace(/\D/g, '');
+  if (digits.length === 0) return '•••';
+  if (digits.length <= 3) return `••• ${digits}`;
+
+  const last3 = digits.slice(-3);
+  return `•••.•••.${last3}`;
 }
 
 /**
- * Masks a personal contact phone number for privacy.
- * Example: "0981-234-567" -> "0981-•••-567"
+ * Masks a personal contact phone number for privacy protection.
+ * Rule: Exposes ONLY the last 3 digits, masking all preceding numbers.
+ * Example: "+595981234567" -> "+595 ••• ••• 567" | "0981 234 900" -> "09•• ••• 900"
  */
-export function maskPhone(phone?: string, hasPermission = false): string {
-  if (!phone) return 'Reservado';
-  if (hasPermission) return phone;
+export function maskPhone(phone?: string, forceUnmask = false): string {
+  if (!phone) return 'S/Tel';
+  if (forceUnmask) return phone;
 
   const clean = phone.trim();
-  if (clean.length <= 5) return '••••••••';
+  const digits = clean.replace(/\D/g, '');
+  if (digits.length === 0) return '••••••';
+  if (digits.length <= 3) return `••• ${digits}`;
 
-  const start = clean.slice(0, 4);
-  const end = clean.slice(-3);
-  return `${start}•••${end}`;
+  const last3 = digits.slice(-3);
+  if (clean.startsWith('+595')) {
+    return `+595 ••• ••• ${last3}`;
+  }
+  if (clean.startsWith('09')) {
+    return `09•• ••• ${last3}`;
+  }
+  return `•••• ••• ${last3}`;
 }
 
 export const maskPhoneNumber = maskPhone;

@@ -28,6 +28,7 @@ import {
   CommunitySettings,
   Meeting,
 } from '../types';
+import { maskDocumentId, maskPhone } from '../utils/privacyUtils';
 import { QRCodeSVG } from 'qrcode.react';
 import { downloadResidentCertificate, downloadIndertDocument } from '../utils/fileDownloader';
 import { ResidentCarnetModal } from "./ResidentCarnetModal";
@@ -151,9 +152,9 @@ export const ResidentPortalView: React.FC<ResidentPortalViewProps> = ({
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 flex flex-wrap items-center justify-center sm:justify-start gap-3">
-                  <span>C.I. N°: <strong>{currentUser.documentId}</strong></span>
+                  <span className="font-mono">C.I. N°: <strong className="text-slate-800">{maskDocumentId(currentUser.documentId)}</strong></span>
                   <span>•</span>
-                  <span>Celular: <strong>{currentUser.phone}</strong></span>
+                  <span className="font-mono">Celular: <strong className="text-slate-800">{maskPhone(currentUser.phone)}</strong></span>
                   <span>•</span>
                   <span>{settings.communityName}</span>
                 </p>
@@ -229,7 +230,7 @@ export const ResidentPortalView: React.FC<ResidentPortalViewProps> = ({
               includeMargin={true}
             />
             <span className="text-[10px] text-slate-500 font-mono">
-              ID: {resident ? resident.id.slice(-6) : currentUser.documentId}
+              ID: {resident ? resident.id.slice(-6) : maskDocumentId(currentUser.documentId)}
             </span>
           </div>
 

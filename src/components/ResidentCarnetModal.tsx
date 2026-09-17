@@ -2,6 +2,7 @@ import React from 'react';
 import { X, User, MapPin } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Resident, CommunitySettings } from '../types';
+import { maskDocumentId } from '../utils/privacyUtils';
 
 interface ResidentCarnetModalProps {
   isOpen: boolean;
@@ -25,7 +26,7 @@ export const ResidentCarnetModal: React.FC<ResidentCarnetModalProps> = ({
           <h2 className="font-bold text-slate-800">Carnet Comunitario</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-500"
+            className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-500 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -39,7 +40,7 @@ export const ResidentCarnetModal: React.FC<ResidentCarnetModalProps> = ({
           <h3 className="font-bold text-xl text-slate-900 text-center mb-1">
             {resident.fullName}
           </h3>
-          <p className="text-sm text-slate-500 mb-4">CI: {resident.documentId}</p>
+          <p className="text-sm text-slate-600 font-mono font-bold mb-4">CI: {maskDocumentId(resident.documentId)}</p>
 
           <div className="bg-slate-50 p-3 rounded-xl flex items-center gap-2 mb-6 w-full justify-center border border-slate-100">
             <MapPin className="w-4 h-4 text-[#1877F2]" />

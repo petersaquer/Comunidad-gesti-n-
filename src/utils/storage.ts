@@ -104,11 +104,11 @@ export const getInitialAppState = () => {
     incidents: loadData<Incident[]>(STORAGE_KEYS.INCIDENTS, initialIncidents),
     settings: (() => {
       let s = loadData<CommunitySettings>(STORAGE_KEYS.SETTINGS, initialSettings);
-      if (!s.communityName || s.communityName.includes('Sector 16') || s.settlementLocation?.includes('Quebrada Alta')) {
+      if (!s.communityName || s.communityName.includes('Sector 16') || s.settlementLocation?.includes('Quebrada Alta') || s.communityName.includes('La Floresta') || s.settlementLocation?.includes('La Floresta')) {
         s = {
           ...s,
-          communityName: 'Comisión Vecinal Pro-Tierra Asentamiento "La Floresta 2"',
-          settlementLocation: 'Asentamiento La Floresta 2, Finca Matriz INDERT',
+          communityName: 'Comisión Vecinal Pro-Tierra Asentamiento "Madre Teresa de Calcuta"',
+          settlementLocation: 'Asentamiento Madre Teresa de Calcuta, Finca Matriz INDERT',
         };
         saveData(STORAGE_KEYS.SETTINGS, s);
       }

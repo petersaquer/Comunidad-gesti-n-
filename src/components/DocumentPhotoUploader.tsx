@@ -10,6 +10,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { generateSampleCIDocument } from '../utils/ciGenerator';
+import { maskDocumentId } from '../utils/privacyUtils';
 
 interface DocumentPhotoUploaderProps {
   fullName: string;
@@ -335,7 +336,7 @@ export const DocumentPhotoUploader: React.FC<DocumentPhotoUploaderProps> = ({
 
             <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
               <span>Titular: <strong>{fullName || 'No especificado'}</strong></span>
-              <span>C.I. N°: <strong>{documentId || 'S/N'}</strong></span>
+              <span className="font-mono">C.I. N°: <strong>{maskDocumentId(documentId) || 'S/N'}</strong></span>
               <button
                 type="button"
                 onClick={() => setZoomSide(null)}

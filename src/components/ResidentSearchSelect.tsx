@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Search, X, Check, User, CreditCard, MapPin, Phone, UserCheck, Users } from 'lucide-react';
 import { Resident } from '../types';
+import { maskDocumentId, maskPhone } from '../utils/privacyUtils';
 
 interface ResidentSearchSelectProps {
   residents: Resident[];
@@ -130,7 +131,7 @@ export const ResidentSearchSelect: React.FC<ResidentSearchSelectProps> = ({
               {selectedResident?.fullName || 'Sin residente asignado'}
             </p>
             <p className="text-[11px] text-slate-500 flex items-center gap-2 mt-0.5 flex-wrap">
-              <span>C.I. {selectedResident?.documentId || 'S/D'}</span>
+              <span>C.I. {maskDocumentId(selectedResident?.documentId)}</span>
               <span>•</span>
               <span>
                 Mz. {selectedResident?.block || '-'} - Lote {selectedResident?.lot || '-'}
@@ -150,8 +151,8 @@ export const ResidentSearchSelect: React.FC<ResidentSearchSelectProps> = ({
                 <h4 className="text-xs sm:text-sm font-black text-slate-900 break-words leading-tight">
                   {selectedResident.fullName}
                 </h4>
-                <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-900 border border-indigo-200 shrink-0">
-                  C.I. {selectedResident.documentId}
+                <span className="text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-900 border border-indigo-200 shrink-0">
+                  C.I. {maskDocumentId(selectedResident.documentId)}
                 </span>
               </div>
               <div className="flex items-center gap-2.5 text-[11px] text-slate-600 mt-1 flex-wrap">
@@ -160,9 +161,9 @@ export const ResidentSearchSelect: React.FC<ResidentSearchSelectProps> = ({
                   Mz. {selectedResident.block} - Lote {selectedResident.lot}
                 </span>
                 {selectedResident.phone && (
-                  <span className="flex items-center gap-1 text-slate-500">
+                  <span className="flex items-center gap-1 text-slate-500 font-mono">
                     <Phone className="w-3 h-3 text-slate-400 shrink-0" />
-                    {selectedResident.phone}
+                    {maskPhone(selectedResident.phone)}
                   </span>
                 )}
               </div>
@@ -375,18 +376,18 @@ export const ResidentSearchSelect: React.FC<ResidentSearchSelectProps> = ({
                           </div>
 
                           <div className="flex items-center gap-2 text-[11px] text-slate-600 mt-1 flex-wrap">
-                            <span className="font-black text-indigo-800 bg-indigo-100/90 px-2 py-0.5 rounded-md text-[11px] flex items-center gap-1 border border-indigo-200/80 shrink-0">
+                            <span className="font-mono font-bold text-indigo-800 bg-indigo-100/90 px-2 py-0.5 rounded-md text-[11px] flex items-center gap-1 border border-indigo-200/80 shrink-0">
                               <CreditCard className="w-3 h-3 text-indigo-600" />
-                              C.I. {r.documentId || 'S/D'}
+                              C.I. {maskDocumentId(r.documentId)}
                             </span>
                             <span className="font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md flex items-center gap-1 border border-slate-200 shrink-0">
                               <MapPin className="w-3 h-3 text-slate-500" />
                               Mz. {r.block} - Lote {r.lot}
                             </span>
                             {r.phone && (
-                              <span className="text-slate-500 hidden sm:flex items-center gap-1 text-[11px]">
+                              <span className="text-slate-500 hidden sm:flex items-center gap-1 text-[11px] font-mono">
                                 <Phone className="w-3 h-3 text-slate-400" />
-                                {r.phone}
+                                {maskPhone(r.phone)}
                               </span>
                             )}
                           </div>

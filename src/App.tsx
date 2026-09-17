@@ -36,6 +36,7 @@ import {
   resetToDemoData,
 } from './utils/storage';
 import { formatParaguayDate, getParaguayTodayISO } from './utils/paraguayDate';
+import { maskDocumentId } from './utils/privacyUtils';
 import {
   fetchStateFromFirebase,
   syncStateToFirebase,
@@ -255,10 +256,10 @@ export default function App() {
             fullName: newUser.fullName,
             documentId: newUser.documentId,
             phone: newUser.phone,
-            barrio: newUser.barrio || residentData?.barrio || 'Sector 16',
+            barrio: newUser.barrio || residentData?.barrio || 'Madre Teresa de Calcuta',
             block: newUser.block,
             lot: newUser.lot,
-            sector: residentData?.sector || `Sector 16 - Mz ${newUser.block}`,
+            sector: residentData?.sector || `Madre Teresa de Calcuta - Mz ${newUser.block}`,
             occupationDate: residentData?.occupationDate || new Date().toISOString().split('T')[0],
             familyMembersCount: residentData?.familyMembersCount || 4,
             status: 'active',
@@ -405,7 +406,7 @@ export default function App() {
 
         const fraudRiskFlag = conflictingResident !== undefined;
         const conflictNotice = conflictingResident
-          ? `[Alerta: Solapamiento con ${conflictingResident.fullName}, C.I. ${conflictingResident.documentId}] `
+          ? `[Alerta: Solapamiento con ${conflictingResident.fullName}, C.I. ${maskDocumentId(conflictingResident.documentId)}] `
           : '';
 
         if (existingRes) {
@@ -416,7 +417,7 @@ export default function App() {
                   ...r,
                   block: request.assignedBlock!,
                   lot: request.assignedLot!,
-                  sector: request.targetSector || `Sector 16 - Mz ${request.assignedBlock}`,
+                  sector: request.targetSector || `Madre Teresa de Calcuta - Mz ${request.assignedBlock}`,
                   phone: request.phone || r.phone,
                   isFraudRisk: fraudRiskFlag || r.isFraudRisk,
                   fraudNotes: conflictNotice + (r.fraudNotes || ''),
@@ -432,10 +433,10 @@ export default function App() {
             fullName: request.applicantName,
             documentId: request.documentId,
             phone: request.phone,
-            barrio: request.barrio || 'Sector 16',
+            barrio: request.barrio || 'Madre Teresa de Calcuta',
             block: request.assignedBlock!,
             lot: request.assignedLot!,
-            sector: request.targetSector || `Sector 16 - Mz ${request.assignedBlock}`,
+            sector: request.targetSector || `Madre Teresa de Calcuta - Mz ${request.assignedBlock}`,
             occupationDate: new Date().toISOString().split('T')[0],
             familyMembersCount: request.familyMembersCount || 4,
             status: 'active',

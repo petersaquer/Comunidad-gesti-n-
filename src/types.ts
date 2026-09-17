@@ -1,3 +1,6 @@
+export const DEFAULT_COMMUNITY_NAME = 'Madre Teresa de Calcuta';
+export const DEFAULT_COMMUNITY_BLOCKS = ['1', '2', '3', '4', '5'] as const;
+
 export type ResidentStatus = 'active' | 'transferred' | 'evicted' | 'flagged' | 'inactive';
 
 export type MaritalStatus = 'soltero' | 'casado' | 'concubinato' | 'viudo' | 'divorciado';
@@ -233,13 +236,18 @@ export interface CommunitySettings {
 }
 
 export type UserRole =
-  | 'admin'       // Presidente / Administrador General (Control total y otorgar permisos)
-  | 'tesorera'    // Tesorera / Tesorero Comunal (Finanzas, cobros, gastos y rendición)
-  | 'secretaria'  // Secretaria / Secretario de Actas (Documentación INDERT, solicitudes, censos)
-  | 'delegado'    // Delegado / Delegada de Manzana (Control barrial, faenas y reclamos de Mz)
-  | 'sindico'     // Síndico / Fiscalizador de Cuentas (Auditoría y control social transparente)
-  | 'directiva'   // Miembro de la Comisión Directiva
-  | 'residente';  // Ocupante / Vecino Censado
+  | 'admin'            // Presidente / Administrador General (Control total y otorgar permisos)
+  | 'vicepresidente'   // Vicepresidente / Vicepresidenta (Co-administración y sustitución legal)
+  | 'secretaria'       // Secretaria / Secretario de Actas (Documentación INDERT, actas, censos)
+  | 'subsecretaria'    // Subsecretario / Prosecretario de Actas (Auxiliar documental y censo)
+  | 'tesorera'         // Tesorera / Tesorero Comunal (Finanzas, cobros, gastos y rendición)
+  | 'subtesorera'      // Subtesorero / Protesorero Comunal (Cobranzas y rendición de caja)
+  | 'sindico'          // Síndico Titular / Fiscalizador de Cuentas (Auditoría y control social transparente)
+  | 'sindico_suplente' // Síndico Suplente (Auditoría y fiscalización coadyuvante)
+  | 'delegado'         // Delegado / Delegada de Manzana (Control barrial, faenas y reclamos de Mz)
+  | 'directiva'        // Vocal Titular / Miembro de la Comisión Directiva
+  | 'vocal_suplente'   // Vocal Suplente (Sustitución y apoyo directivo)
+  | 'residente';       // Ocupante / Vecino Censado
 
 export interface UserPermissions {
   canManageUsers?: boolean;         // Otorgar permisos y administrar roles de usuarios

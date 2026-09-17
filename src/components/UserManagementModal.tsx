@@ -23,6 +23,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { UserAccount, UserRole, UserPermissions } from '../types';
+import { maskDocumentId, maskPhone } from '../utils/privacyUtils';
 import { UserBadge } from './UserBadge';
 import {
   ROLE_CONFIGS,
@@ -50,7 +51,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
   onSwitchUser,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [roleFilter, setRoleFilter] = useState<'all' | 'directiva' | 'residentes'>('all');
+  const [roleFilter, setRoleFilter] = useState<'all' | 'directiva' | 'delegados' | 'sindicos' | 'residentes'>('all');
 
   // Edit / Grant Permissions state
   const [editingUser, setEditingUser] = useState<UserAccount | null>(null);
@@ -65,7 +66,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
   const [newDocumentId, setNewDocumentId] = useState('');
   const [newPhone, setNewPhone] = useState('+595');
   const [newEmail, setNewEmail] = useState('');
-  const [newBlock, setNewBlock] = useState('A');
+  const [newBlock, setNewBlock] = useState('1');
   const [newLot, setNewLot] = useState('01');
 
   // Open the permission editor for a user
@@ -73,7 +74,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
     setEditingUser(user);
     setSelectedRole(user.role);
     setCustomRoleTitle(user.customRoleTitle || '');
-    setAssignedBlock(user.assignedBlock || (user.role === 'delegado' ? user.block || 'A' : ''));
+    setAssignedBlock(user.assignedBlock || (user.role === 'delegado' ? user.block || '1' : '1'));
 
     // Inherit current permissions or default from role
     const defaultPerms = ROLE_CONFIGS[user.role].defaultPermissions;
@@ -142,7 +143,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
       customRoleTitle: customRoleTitle.trim() || undefined,
       assignedBlock: selectedRole === 'delegado' ? assignedBlock.trim() || undefined : undefined,
       permissions,
-      barrio: 'Sector 16',
+      barrio: 'Madre Teresa de Calcuta',
       block: newBlock,
       lot: newLot,
       createdAt: new Date().toISOString().split('T')[0],
@@ -170,10 +171,21 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
     return users.filter((u) => {
       // Role filter
       if (roleFilter === 'directiva') {
-        const isDir = ['admin', 'tesorera', 'secretaria', 'delegado', 'sindico', 'directiva'].includes(
-          u.role
-        );
+        const isDir = [
+          'admin',
+          'vicepresidente',
+          'tesorera',
+          'subtesorera',
+          'secretaria',
+          'subsecretaria',
+          'directiva',
+          'vocal_suplente',
+        ].includes(u.role);
         if (!isDir) return false;
+      } else if (roleFilter === 'delegados') {
+        if (u.role !== 'delegado') return false;
+      } else if (roleFilter === 'sindicos') {
+        if (u.role !== 'sindico' && u.role !== 'sindico_suplente') return false;
       } else if (roleFilter === 'residentes') {
         if (u.role !== 'residente') return false;
       }
@@ -228,10 +240,10 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
         {/* Subheader: Search, Filter Tabs & Create Button */}
         <div className="p-4 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           {/* Role Filter Tabs */}
-          <div className="flex items-center gap-1.5 p-1 bg-slate-200/70 rounded-xl text-xs font-bold">
+          <div className="flex items-center gap-1 p-1 bg-slate-200/70 rounded-xl text-xs font-bold overflow-x-auto">
             <button
               onClick={() => setRoleFilter('all')}
-              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+              className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                 roleFilter === 'all'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -241,18 +253,40 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
             </button>
             <button
               onClick={() => setRoleFilter('directiva')}
-              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1 whitespace-nowrap ${
                 roleFilter === 'directiva'
                   ? 'bg-white text-[#1877F2] shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Crown className="w-3.5 h-3.5 text-amber-500" />
-              Directiva & Roles
+              Directiva
+            </button>
+            <button
+              onClick={() => setRoleFilter('delegados')}
+              className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1 whitespace-nowrap ${
+                roleFilter === 'delegados'
+                  ? 'bg-white text-orange-600 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Home className="w-3.5 h-3.5 text-orange-500" />
+              Delegados Mz
+            </button>
+            <button
+              onClick={() => setRoleFilter('sindicos')}
+              className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1 whitespace-nowrap ${
+                roleFilter === 'sindicos'
+                  ? 'bg-white text-cyan-700 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Scale className="w-3.5 h-3.5 text-cyan-600" />
+              Síndicos
             </button>
             <button
               onClick={() => setRoleFilter('residentes')}
-              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+              className={`px-2.5 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                 roleFilter === 'residentes'
                   ? 'bg-white text-slate-900 shadow-xs'
                   : 'text-slate-600 hover:text-slate-900'
@@ -334,7 +368,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                         {user.fullName}
                       </h4>
                       <p className="text-xs text-slate-500 mt-0.5 font-medium flex items-center gap-1">
-                        <span>C.I. N° {user.documentId}</span>
+                        <span className="font-mono">C.I. N° {maskDocumentId(user.documentId)}</span>
                         {user.block && user.lot && (
                           <span className="text-slate-400">• Mz {user.block} - Lote {user.lot}</span>
                         )}
@@ -343,9 +377,9 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                       {/* Contact details */}
                       <div className="mt-2 text-xs text-slate-600 flex flex-wrap items-center gap-x-3 gap-y-1">
                         {user.phone && (
-                          <span className="inline-flex items-center gap-1 text-[11px]">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-mono">
                             <Phone className="w-3 h-3 text-slate-400" />
-                            {user.phone}
+                            {maskPhone(user.phone)}
                           </span>
                         )}
                         {user.email && (
@@ -467,7 +501,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                     Otorgar Rol e Insignia a {editingUser.fullName}
                   </h4>
                   <p className="text-xs text-slate-300">
-                    C.I.: {editingUser.documentId} • Mz {editingUser.block || '-'}-Lote {editingUser.lot || '-'}
+                    C.I.: <span className="font-mono font-bold">{maskDocumentId(editingUser.documentId)}</span> • Mz {editingUser.block || '-'}-Lote {editingUser.lot || '-'}
                   </p>
                 </div>
               </div>
@@ -491,37 +525,73 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                       {
                         role: 'admin',
                         title: '👑 Presidente / Admin',
-                        desc: 'Acceso total y otorgar permisos a otros',
+                        desc: 'Máxima autoridad, expedientes INDERT y asignación de permisos',
                         badgeColor: 'border-amber-300 bg-amber-50/50',
                       },
                       {
-                        role: 'tesorera',
-                        title: '💰 Tesorera / Tesorero',
-                        desc: 'Cobro de cuotas, recibos y rendición de gastos',
-                        badgeColor: 'border-emerald-300 bg-emerald-50/50',
+                        role: 'vicepresidente',
+                        title: '👑 Vicepresidente/a',
+                        desc: 'Sustitución estatutaria y coordinación de comisiones',
+                        badgeColor: 'border-yellow-400 bg-yellow-50/50',
                       },
                       {
                         role: 'secretaria',
                         title: '📝 Secretaria / Secretario',
-                        desc: 'Actas comunales, censo y expedientes INDERT',
+                        desc: 'Libro de actas, resoluciones, censo y notas oficiales',
                         badgeColor: 'border-indigo-300 bg-indigo-50/50',
+                      },
+                      {
+                        role: 'subsecretaria',
+                        title: '📋 Prosecretario / Subsecretario',
+                        desc: 'Auxiliar de actas, registro de asambleas y archivo',
+                        badgeColor: 'border-purple-300 bg-purple-50/50',
+                      },
+                      {
+                        role: 'tesorera',
+                        title: '💰 Tesorera / Tesorero',
+                        desc: 'Custodio de fondos, cobro de aportes y rendición de gastos',
+                        badgeColor: 'border-emerald-300 bg-emerald-50/50',
+                      },
+                      {
+                        role: 'subtesorera',
+                        title: '💵 Subtesorero / Protesorero',
+                        desc: 'Cobranzas barriales, recibos y arqueo de caja chica',
+                        badgeColor: 'border-teal-300 bg-teal-50/50',
+                      },
+                      {
+                        role: 'sindico',
+                        title: '⚖️ Síndico Titular (Fiscalizador)',
+                        desc: 'Auditoría independiente y control social de balances',
+                        badgeColor: 'border-cyan-300 bg-cyan-50/50',
+                      },
+                      {
+                        role: 'sindico_suplente',
+                        title: '⚖️ Síndico Suplente',
+                        desc: 'Apoyo y sustitución del órgano fiscalizador',
+                        badgeColor: 'border-sky-300 bg-sky-50/50',
                       },
                       {
                         role: 'delegado',
                         title: '🏘️ Delegado/a de Manzana',
-                        desc: 'Faenas barriales y reclamos de su manzana',
+                        desc: 'Enlace de vecinos, faenas comunitarias y reclamos Mz',
                         badgeColor: 'border-orange-300 bg-orange-50/50',
                       },
                       {
-                        role: 'sindico',
-                        title: '⚖️ Síndico Fiscalizador',
-                        desc: 'Auditoría y control de transparencia de cuentas',
-                        badgeColor: 'border-cyan-300 bg-cyan-50/50',
+                        role: 'directiva',
+                        title: '🛡️ Vocal Titular (Directiva)',
+                        desc: 'Miembro directivo con voz, voto y gestión comunal',
+                        badgeColor: 'border-blue-300 bg-blue-50/50',
+                      },
+                      {
+                        role: 'vocal_suplente',
+                        title: '🛡️ Vocal Suplente',
+                        desc: 'Apoyo directivo y sustitución en comisiones vecinales',
+                        badgeColor: 'border-slate-300 bg-slate-100',
                       },
                       {
                         role: 'residente',
                         title: '👤 Vecino / Ocupante',
-                        desc: 'Portal personal y consulta de estado de cuenta',
+                        desc: 'Padrón de lotes, consulta personal y recibos',
                         badgeColor: 'border-slate-200 bg-slate-50',
                       },
                     ] as const
@@ -601,15 +671,15 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                       Manzana Asignada:
                     </label>
                     <select
-                      value={assignedBlock}
+                      value={assignedBlock || '1'}
                       onChange={(e) => setAssignedBlock(e.target.value)}
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-medium focus:ring-2 focus:ring-[#1877F2]"
                     >
-                      <option value="A">Manzana A</option>
-                      <option value="B">Manzana B</option>
-                      <option value="C">Manzana C</option>
-                      <option value="D">Manzana D</option>
-                      <option value="E">Manzana E</option>
+                      <option value="1">Manzana 1</option>
+                      <option value="2">Manzana 2</option>
+                      <option value="3">Manzana 3</option>
+                      <option value="4">Manzana 4</option>
+                      <option value="5">Manzana 5</option>
                     </select>
                   </div>
                 )}
@@ -772,10 +842,11 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                     onChange={(e) => setNewBlock(e.target.value)}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1877F2]"
                   >
-                    <option value="A">Manzana A</option>
-                    <option value="B">Manzana B</option>
-                    <option value="C">Manzana C</option>
-                    <option value="D">Manzana D</option>
+                    <option value="1">Manzana 1</option>
+                    <option value="2">Manzana 2</option>
+                    <option value="3">Manzana 3</option>
+                    <option value="4">Manzana 4</option>
+                    <option value="5">Manzana 5</option>
                     <option value="Admin">Sede / Admin</option>
                   </select>
                 </div>
@@ -802,12 +873,26 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                   onChange={(e) => handleRoleChange(e.target.value as UserRole)}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold text-slate-800 focus:ring-2 focus:ring-[#1877F2]"
                 >
-                  <option value="tesorera">💰 Tesorera / Tesorero Comunal</option>
-                  <option value="secretaria">📝 Secretaria / Secretario de Actas</option>
-                  <option value="admin">👑 Presidente / Administrador</option>
-                  <option value="delegado">🏘️ Delegado/a de Manzana</option>
-                  <option value="sindico">⚖️ Síndico Fiscalizador</option>
-                  <option value="residente">👤 Ocupante / Vecino Censado</option>
+                  <optgroup label="Mesa Directiva Ejecutiva">
+                    <option value="admin">👑 Presidente / Administrador General</option>
+                    <option value="vicepresidente">👑 Vicepresidente / Vicepresidenta</option>
+                    <option value="secretaria">📝 Secretaria / Secretario de Actas</option>
+                    <option value="subsecretaria">📋 Prosecretario / Subsecretario de Actas</option>
+                    <option value="tesorera">💰 Tesorera / Tesorero Comunal</option>
+                    <option value="subtesorera">💵 Subtesorero / Protesorero Comunal</option>
+                  </optgroup>
+                  <optgroup label="Órgano de Fiscalización y Control">
+                    <option value="sindico">⚖️ Síndico Titular (Fiscalizador)</option>
+                    <option value="sindico_suplente">⚖️ Síndico Suplente</option>
+                  </optgroup>
+                  <optgroup label="Representación Territorial y Vocales">
+                    <option value="delegado">🏘️ Delegado/a de Manzana</option>
+                    <option value="directiva">🛡️ Vocal Titular (Comisión Directiva)</option>
+                    <option value="vocal_suplente">🛡️ Vocal Suplente</option>
+                  </optgroup>
+                  <optgroup label="Padrón Comunitario">
+                    <option value="residente">👤 Ocupante / Vecino Censado</option>
+                  </optgroup>
                 </select>
               </div>
 

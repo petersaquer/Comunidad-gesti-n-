@@ -41,6 +41,7 @@ import {
 import { S16Logo } from './S16Logo';
 import { UserBadge } from './UserBadge';
 import { formatParaguayDate, formatParaguayTime } from '../utils/paraguayDate';
+import { maskDocumentId } from '../utils/privacyUtils';
 
 interface FacebookHeaderProps {
   activeTab: string;
@@ -603,8 +604,8 @@ export const FacebookHeader: React.FC<FacebookHeaderProps> = ({
                         <p className="font-extrabold text-xs sm:text-sm text-slate-900 truncate">
                           {currentUser.fullName}
                         </p>
-                        <p className="text-[11px] text-slate-500 truncate">
-                          C.I. {currentUser.documentId}
+                        <p className="text-[11px] text-slate-500 truncate font-mono">
+                          C.I. {maskDocumentId(currentUser.documentId)}
                           {currentUser.block && currentUser.lot && ` • Mz ${currentUser.block}-${currentUser.lot}`}
                         </p>
                         <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">

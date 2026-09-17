@@ -491,14 +491,10 @@ export const ResidentsTab: React.FC<ResidentsTabProps> = ({
                   </div>
                   <div className="text-xs text-slate-500 font-mono mt-0.5 flex items-center gap-1.5 flex-wrap">
                     <span>C.I. / DNI:</span>
-                    {canAccessSensitive ? (
-                      <strong className="text-slate-800">{resident.documentId}</strong>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 font-mono text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 text-[11px]">
-                        <Lock className="w-2.5 h-2.5 text-slate-400" />
-                        {maskDocumentId(resident.documentId, false)}
-                      </span>
-                    )}
+                    <span className="inline-flex items-center gap-1 font-mono font-bold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 text-[11px]">
+                      <Lock className="w-2.5 h-2.5 text-slate-400" />
+                      {maskDocumentId(resident.documentId)}
+                    </span>
                   </div>
 
                   {/* Demographic Badges: Civil Status, Children, Disability */}
@@ -531,16 +527,9 @@ export const ResidentsTab: React.FC<ResidentsTabProps> = ({
 
                   {/* Phone & Family */}
                   <div className="flex items-center justify-between text-xs text-slate-600 mt-2.5 pt-2.5 border-t border-slate-100">
-                    <span className="flex items-center gap-1">
-                      <Phone className="w-3.5 h-3.5 text-slate-400" />
-                      {canAccessSensitive ? (
-                        resident.phone
-                      ) : (
-                        <span className="inline-flex items-center gap-1 font-mono text-slate-500 text-[11px]">
-                          <Lock className="w-2.5 h-2.5 text-slate-400" />
-                          {maskPhone(resident.phone, false)}
-                        </span>
-                      )}
+                    <span className="flex items-center gap-1 font-mono text-slate-600 text-xs">
+                      <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span>{maskPhone(resident.phone)}</span>
                     </span>
                     <span className="text-slate-500 text-[11px]">
                       {resident.familyMembersCount} pers. en lote

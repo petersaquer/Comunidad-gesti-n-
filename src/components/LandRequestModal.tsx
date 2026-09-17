@@ -27,6 +27,7 @@ import {
 import { DocumentPhotoUploader } from './DocumentPhotoUploader';
 import { openWhatsApp } from '../utils/notificationUtils';
 import { formatParaguayDate, getParaguayTodayISO } from '../utils/paraguayDate';
+import { maskDocumentId } from '../utils/privacyUtils';
 
 interface LandRequestModalProps {
   isOpen: boolean;
@@ -50,10 +51,10 @@ export const LandRequestModal: React.FC<LandRequestModalProps> = ({
     documentId: '',
     phone: '',
     requestType: 'nuevo_lote',
-    barrio: 'Sector 16',
-    requestedBlock: 'A',
+    barrio: 'Madre Teresa de Calcuta',
+    requestedBlock: '1',
     requestedLot: '',
-    targetSector: 'Sector Entrada',
+    targetSector: 'Entrada Principal',
     requestDate: new Date().toISOString().split('T')[0],
     status: 'pendiente' as LandRequestStatus,
     familyMembersCount: 3,
@@ -80,7 +81,7 @@ export const LandRequestModal: React.FC<LandRequestModalProps> = ({
     if (initialRequest) {
       setFormData({
         ...initialRequest,
-        barrio: initialRequest.barrio || 'Sector 16',
+        barrio: initialRequest.barrio || 'Madre Teresa de Calcuta',
         maritalStatus: initialRequest.maritalStatus || 'soltero',
         hasPartner: Boolean(initialRequest.hasPartner),
         childrenCount: initialRequest.childrenCount ?? 0,
@@ -96,10 +97,10 @@ export const LandRequestModal: React.FC<LandRequestModalProps> = ({
         documentId: '',
         phone: '',
         requestType: 'nuevo_lote',
-        barrio: 'Sector 16',
-        requestedBlock: 'B',
+        barrio: 'Madre Teresa de Calcuta',
+        requestedBlock: '2',
         requestedLot: '',
-        targetSector: 'Sector 16 - Mz B',
+        targetSector: 'Madre Teresa de Calcuta - Mz 2',
         requestDate: new Date().toISOString().split('T')[0],
         status: 'pendiente',
         familyMembersCount: 3,
@@ -177,13 +178,13 @@ export const LandRequestModal: React.FC<LandRequestModalProps> = ({
     const status = formData.status;
 
     if (status === 'pendiente') {
-      message = `Hola ${formData.applicantName}, le informamos desde la Comisión Vecinal del Sector 16 que su solicitud de terreno (C.I. ${formData.documentId}) ha sido recibida y se encuentra PENDIENTE DE EVALUACIÓN por la comisión. Le avisaremos oportunamente.`;
+      message = `Hola ${formData.applicantName}, le informamos desde la Comisión Vecinal del Sector 16 que su solicitud de terreno (C.I. ${maskDocumentId(formData.documentId)}) ha sido recibida y se encuentra PENDIENTE DE EVALUACIÓN por la comisión. Le avisaremos oportunamente.`;
     } else if (status === 'falta_documentos') {
-      message = `Estimado/a ${formData.applicantName} (C.I. ${formData.documentId}):\nLe contactamos de la Comisión Vecinal del Sector 16. Su solicitud de lote se encuentra OBSERVADA POR FALTA DE DOCUMENTOS para conformar su carpeta INDERT:\n\n*Documentos Faltantes:*\n${formData.missingDocumentsNotes || 'Fotocopia de C.I. y certificado de vida y residencia.'}\n\nFavor acercar dichos documentos a la brevedad a la secretaría comunal.`;
+      message = `Estimado/a ${formData.applicantName} (C.I. ${maskDocumentId(formData.documentId)}):\nLe contactamos de la Comisión Vecinal del Sector 16. Su solicitud de lote se encuentra OBSERVADA POR FALTA DE DOCUMENTOS para conformar su carpeta INDERT:\n\n*Documentos Faltantes:*\n${formData.missingDocumentsNotes || 'Fotocopia de C.I. y certificado de vida y residencia.'}\n\nFavor acercar dichos documentos a la brevedad a la secretaría comunal.`;
     } else if (status === 'aprobado') {
       message = `¡Buenas noticias ${formData.applicantName}!\nLe confirmamos que su solicitud de terreno en el Sector 16 ha sido *APROBADA*.\n\n- Manzana Asignada: ${formData.assignedBlock || formData.requestedBlock}\n- Lote Asignado: ${formData.assignedLot || formData.requestedLot}\n- Resolución: ${formData.decisionNotes || 'Aprobado por comisión'}\n\nFavor acérquese con la directiva para la firma de acta y entrega de mojón.`;
     } else if (status === 'denegado') {
-      message = `Estimado/a ${formData.applicantName} (C.I. ${formData.documentId}):\nLe informamos que su solicitud de terreno ha sido denegada por la directiva comunal. Motivo: ${formData.decisionNotes || 'Disponibilidad agotada o antecedentes incompatibles.'}`;
+      message = `Estimado/a ${formData.applicantName} (C.I. ${maskDocumentId(formData.documentId)}):\nLe informamos que su solicitud de terreno ha sido denegada por la directiva comunal. Motivo: ${formData.decisionNotes || 'Disponibilidad agotada o antecedentes incompatibles.'}`;
     }
 
     openWhatsApp(formData.phone, message);
@@ -202,7 +203,7 @@ export const LandRequestModal: React.FC<LandRequestModalProps> = ({
       );
       if (occupant) {
         const proceed = confirm(
-          `¡ADVERTENCIA DE SOLAPAMIENTO DE TERRENO!\n\nEl Lote ${formData.assignedLot} de la Manzana ${formData.assignedBlock} ya figura registrado a nombre de:\n${occupant.fullName} (C.I. ${occupant.documentId}).\n\n¿Desea adjudicar de todas formas a pesar del solapamiento?`
+          `¡ADVERTENCIA DE SOLAPAMIENTO DE TERRENO!\n\nEl Lote ${formData.assignedLot} de la Manzana ${formData.assignedBlock} ya figura registrado a nombre de:\n${occupant.fullName} (C.I. ${maskDocumentId(occupant.documentId)}).\n\n¿Desea adjudicar de todas formas a pesar del solapamiento?`
         );
         if (!proceed) return;
       }
@@ -372,14 +373,20 @@ export const LandRequestModal: React.FC<LandRequestModalProps> = ({
                       <label className="block text-[11px] font-bold text-emerald-900 mb-0.5">
                         Manzana Asignada *
                       </label>
-                      <input
-                        type="text"
-                        required={formData.status === 'aprobado'}
-                        value={formData.assignedBlock}
-                        onChange={(e) => setFormData({ ...formData, assignedBlock: e.target.value.toUpperCase() })}
-                        placeholder="Ej: A, B, C..."
+                      <select
+                        value={formData.assignedBlock || '1'}
+                        onChange={(e) => setFormData({ ...formData, assignedBlock: e.target.value })}
                         className="w-full px-2.5 py-1.5 bg-white border border-emerald-300 rounded-lg font-bold text-slate-800"
-                      />
+                      >
+                        <option value="1">Manzana 1</option>
+                        <option value="2">Manzana 2</option>
+                        <option value="3">Manzana 3</option>
+                        <option value="4">Manzana 4</option>
+                        <option value="5">Manzana 5</option>
+                        {formData.assignedBlock && !['1', '2', '3', '4', '5'].includes(formData.assignedBlock) && (
+                          <option value={formData.assignedBlock}>Manzana {formData.assignedBlock}</option>
+                        )}
+                      </select>
                     </div>
                     <div>
                       <label className="block text-[11px] font-bold text-emerald-900 mb-0.5">
@@ -556,13 +563,20 @@ export const LandRequestModal: React.FC<LandRequestModalProps> = ({
 
               <div>
                 <label className="block font-bold text-slate-700 mb-1">Manzana Deseada / Sugerida</label>
-                <input
-                  type="text"
-                  placeholder="Ej: B, C..."
-                  value={formData.requestedBlock}
-                  onChange={(e) => setFormData({ ...formData, requestedBlock: e.target.value.toUpperCase() })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold"
-                />
+                <select
+                  value={formData.requestedBlock || '1'}
+                  onChange={(e) => setFormData({ ...formData, requestedBlock: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg font-bold bg-white"
+                >
+                  <option value="1">Manzana 1</option>
+                  <option value="2">Manzana 2</option>
+                  <option value="3">Manzana 3</option>
+                  <option value="4">Manzana 4</option>
+                  <option value="5">Manzana 5</option>
+                  {formData.requestedBlock && !['1', '2', '3', '4', '5'].includes(formData.requestedBlock) && (
+                    <option value={formData.requestedBlock}>Manzana {formData.requestedBlock}</option>
+                  )}
+                </select>
               </div>
 
               <div>

@@ -22,8 +22,8 @@ export const ResidentModal: React.FC<ResidentModalProps> = ({
     fullName: '',
     documentId: '',
     phone: '',
-    barrio: 'Sector 16',
-    block: 'A',
+    barrio: 'Madre Teresa de Calcuta',
+    block: '1',
     lot: '',
     sector: 'Entrada Principal',
     occupationDate: new Date().toISOString().split('T')[0],
@@ -51,7 +51,7 @@ export const ResidentModal: React.FC<ResidentModalProps> = ({
     if (initialResident) {
       setFormData({
         ...initialResident,
-        barrio: initialResident.barrio || 'Sector 16',
+        barrio: initialResident.barrio || 'Madre Teresa de Calcuta',
         maritalStatus: initialResident.maritalStatus || 'soltero',
         hasPartner: initialResident.hasPartner ?? (initialResident.maritalStatus === 'casado' || initialResident.maritalStatus === 'concubinato'),
         childrenCount: initialResident.childrenCount ?? 0,
@@ -65,8 +65,8 @@ export const ResidentModal: React.FC<ResidentModalProps> = ({
         fullName: '',
         documentId: '',
         phone: '',
-        barrio: 'Sector 16',
-        block: 'A',
+        barrio: 'Madre Teresa de Calcuta',
+        block: '1',
         lot: '',
         sector: 'Entrada Principal',
         occupationDate: new Date().toISOString().split('T')[0],
@@ -299,14 +299,20 @@ export const ResidentModal: React.FC<ResidentModalProps> = ({
               {/* Manzana */}
               <div className="sm:col-span-1">
                 <label className="block font-semibold text-slate-900 mb-1">Manzana (Mz.) *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ej: A, B, C, 1"
-                  value={formData.block}
+                <select
+                  value={formData.block || '1'}
                   onChange={(e) => handleLotChange(formData.lot || '', e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1877F2] text-sm uppercase font-bold text-center"
-                />
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1877F2] text-sm font-bold text-center bg-white"
+                >
+                  <option value="1">Manzana 1</option>
+                  <option value="2">Manzana 2</option>
+                  <option value="3">Manzana 3</option>
+                  <option value="4">Manzana 4</option>
+                  <option value="5">Manzana 5</option>
+                  {formData.block && !['1', '2', '3', '4', '5'].includes(formData.block) && (
+                    <option value={formData.block}>Manzana {formData.block}</option>
+                  )}
+                </select>
               </div>
 
               {/* Lote */}

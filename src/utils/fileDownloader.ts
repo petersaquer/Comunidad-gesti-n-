@@ -1,6 +1,7 @@
 import { IndertDocument, Resident, Contribution, CommunitySettings } from '../types';
 import { formatGuaranies } from './currency';
 import { formatParaguayDate, formatParaguayDateTime } from './paraguayDate';
+import { maskDocumentId, maskPhone } from './privacyUtils';
 
 /**
  * Downloads an IndertDocument. If fileData is present, downloads it directly.
@@ -95,15 +96,15 @@ A QUIEN CORRESPONDA Y A LAS AUTORIDADES DEL I.N.D.E.R.T.:
 La Comisión Vecinal abajo firmante CERTIFICA que el/la ciudadano/a:
 
   NOMBRE Y APELLIDO:    ${resident.fullName}
-  CÉDULA DE IDENTIDAD:  ${resident.documentId}
-  TELÉFONO DE CONTACTO: ${resident.phone}
+  CÉDULA DE IDENTIDAD:  ${maskDocumentId(resident.documentId)}
+  TELÉFONO DE CONTACTO: ${maskPhone(resident.phone)}
   BARRIO / SECTOR:      ${resident.barrio || 'Sector 16'}
   MANZANA ASIGNADA:     ${resident.block}
   LOTE NÚMERO:          ${resident.lot}
   SECTOR / ZONA:        ${resident.sector}
   FECHA DE INICIO:      ${resident.occupationDate}
   ESTADO CIVIL:         ${resident.maritalStatus ? resident.maritalStatus.toUpperCase() : 'NO ESPECIFICADO'}
-  CÓNYUGE / PAREJA:     ${resident.hasPartner && resident.partnerName ? `${resident.partnerName} (C.I. ${resident.partnerDocumentId || 'S/N'})` : 'No registra cónyuge en lote'}
+  CÓNYUGE / PAREJA:     ${resident.hasPartner && resident.partnerName ? `${resident.partnerName} (C.I. ${maskDocumentId(resident.partnerDocumentId) || 'S/N'})` : 'No registra cónyuge en lote'}
   CANTIDAD DE HIJOS:    ${resident.childrenCount ?? 0}
   MIEMBROS DE FAMILIA:  ${resident.familyMembersCount} personas en el lote
   ATENCIÓN DISCAPACIDAD:${resident.hasChildrenWithDisability ? `SÍ (${resident.disabilityDetails || 'Prioridad de accesibilidad'})` : 'No registra'}
@@ -138,7 +139,7 @@ __________________________________          __________________________________
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `Certificado_Ocupacion_Mz_${resident.block}_Lote_${resident.lot}_${resident.documentId}.txt`;
+  link.download = `Certificado_Ocupacion_Mz_${resident.block}_Lote_${resident.lot}_${maskDocumentId(resident.documentId).replace(/[^a-zA-Z0-9]/g, '')}.txt`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

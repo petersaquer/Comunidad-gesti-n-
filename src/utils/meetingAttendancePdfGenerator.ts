@@ -1,5 +1,6 @@
 import { jsPDF } from 'jspdf';
 import { Meeting, Resident, CommunitySettings } from '../types';
+import { maskDocumentId } from './privacyUtils';
 import { 
   formatParaguayDate, 
   formatParaguayTime, 
@@ -352,7 +353,7 @@ export const generateMeetingAttendancePDF = ({
       const numStr = `${idx + 1}`;
       const statusStr = item.isPresent ? 'PRESENTE' : 'AUSENTE';
       const nameStr = item.resident.fullName.substring(0, 32);
-      const docStr = item.resident.documentId || 'S/D';
+      const docStr = maskDocumentId(item.resident.documentId);
       const locationStr = `Mz ${item.resident.block || '-'} • Lote ${item.resident.lot || '-'}`;
       const signatureOrQr = item.isPresent ? '✓ Carnet QR' : 'Falta';
 

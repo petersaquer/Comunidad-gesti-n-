@@ -1,6 +1,6 @@
 {
   "name": "S16 - Gestión Comunitaria INDERT",
-  "description": "Sistema S16 para la gestión comunitaria, censo de residentes, comisión vecinal, catastro de lotes y expedientes INDERT del Asentamiento La Floresta 2.",
+  "description": "Sistema S16 para la gestión comunitaria, censo de residentes, comisión vecinal, catastro de lotes y expedientes INDERT del Asentamiento Madre Teresa de Calcuta (Manzanas 1 al 5).",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

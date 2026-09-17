@@ -51,9 +51,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [regFullName, setRegFullName] = useState('');
   const [regDocumentId, setRegDocumentId] = useState('');
   const [regPhone, setRegPhone] = useState('');
-  const [regBarrio, setRegBarrio] = useState('Sector 16');
+  const [regBarrio, setRegBarrio] = useState('Madre Teresa de Calcuta');
   const [regRole, setRegRole] = useState<UserRole>('residente');
-  const [regBlock, setRegBlock] = useState('A');
+  const [regBlock, setRegBlock] = useState('1');
   const [regLot, setRegLot] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regError, setRegError] = useState('');
@@ -500,11 +500,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       onChange={(e) => setRegBlock(e.target.value)}
                       className="w-full px-2.5 py-1.5 bg-white border border-blue-200 rounded-lg text-xs font-bold text-slate-800"
                     >
-                      <option value="A">Manzana A</option>
-                      <option value="B">Manzana B</option>
-                      <option value="C">Manzana C</option>
-                      <option value="D">Manzana D</option>
-                      <option value="E">Manzana E</option>
+                      <option value="1">Manzana 1</option>
+                      <option value="2">Manzana 2</option>
+                      <option value="3">Manzana 3</option>
+                      <option value="4">Manzana 4</option>
+                      <option value="5">Manzana 5</option>
                     </select>
                   </div>
                   <div>

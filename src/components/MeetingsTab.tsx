@@ -9,6 +9,7 @@ import { Html5QrcodeScanner, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { AttendanceKPIs } from './AttendanceKPIs';
 import * as XLSX from 'xlsx';
 import { generateMeetingAttendancePDF } from '../utils/meetingAttendancePdfGenerator';
+import { maskDocumentId } from '../utils/privacyUtils';
 import { 
   formatParaguayDate, 
   formatParaguayTime, 
@@ -77,7 +78,7 @@ export const MeetingsTab: React.FC<MeetingsTabProps> = ({
       return {
         'Estado': isPresent ? 'PRESENTE' : 'AUSENTE (FALTA)',
         'Nombre Completo': resident.fullName,
-        'Cédula de Identidad': resident.documentId,
+        'Cédula de Identidad': maskDocumentId(resident.documentId),
         'Manzana': resident.block || '-',
         'Lote': resident.lot || '-',
         'Fecha de Reunión': meetingDateFormatted

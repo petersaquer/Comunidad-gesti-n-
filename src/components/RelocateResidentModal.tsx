@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, ArrowRight, AlertTriangle, CheckCircle2, MapPin, FileText, MessageCircle, UserCheck } from 'lucide-react';
 import { Resident, RelocationRecord, CommunitySettings } from '../types';
 import { openWhatsApp } from '../utils/notificationUtils';
+import { maskDocumentId, maskPhone } from '../utils/privacyUtils';
 
 interface RelocateResidentModalProps {
   isOpen: boolean;
@@ -28,9 +29,9 @@ export const RelocateResidentModal: React.FC<RelocateResidentModalProps> = ({
   settings,
   onConfirmRelocation,
 }) => {
-  const [newBlock, setNewBlock] = useState('B');
+  const [newBlock, setNewBlock] = useState('2');
   const [newLot, setNewLot] = useState('');
-  const [newSector, setNewSector] = useState(`Sector 16 - Mz B`);
+  const [newSector, setNewSector] = useState(`Madre Teresa de Calcuta - Mz 2`);
   const [reason, setReason] = useState('Apertura y ensanche de calle comunal');
   const [actNumber, setActNumber] = useState(`Acta N° 15/2026`);
   const [authorizedBy, setAuthorizedBy] = useState(`${settings.presidentName} (Presidente)`);
@@ -64,7 +65,7 @@ export const RelocateResidentModal: React.FC<RelocateResidentModalProps> = ({
   };
 
   const handleNotifyWhatsApp = () => {
-    const text = `Estimado/a ${resident.fullName} (C.I. ${resident.documentId}):\nLe comunicamos que por resolución de la Comisión Vecinal del Sector 16 (${actNumber}), se ha formalizado su REUBICACIÓN de lote:\n\n- Ubicación Anterior: Manzana ${resident.block}, Lote ${resident.lot}\n- NUEVA Ubicación: Manzana ${newBlock}, Lote ${newLot} (${newSector})\n- Motivo: ${reason}\n- Autorizado por: ${authorizedBy}\n\nFavor acérquese a la secretaría comunal para la actualización de su legajo de ocupación para el INDERT.`;
+    const text = `Estimado/a ${resident.fullName} (C.I. ${maskDocumentId(resident.documentId)}):\nLe comunicamos que por resolución de la Comisión Vecinal del Sector 16 (${actNumber}), se ha formalizado su REUBICACIÓN de lote:\n\n- Ubicación Anterior: Manzana ${resident.block}, Lote ${resident.lot}\n- NUEVA Ubicación: Manzana ${newBlock}, Lote ${newLot} (${newSector})\n- Motivo: ${reason}\n- Autorizado por: ${authorizedBy}\n\nFavor acérquese a la secretaría comunal para la actualización de su legajo de ocupación para el INDERT.`;
     openWhatsApp(resident.phone, text);
   };
 
@@ -104,7 +105,7 @@ export const RelocateResidentModal: React.FC<RelocateResidentModalProps> = ({
                 </span>
                 <span className="text-sm font-black text-slate-900 block">{resident.fullName}</span>
                 <span className="text-xs text-slate-500 font-mono">
-                  C.I. {resident.documentId} • Tel: {resident.phone}
+                  C.I. {maskDocumentId(resident.documentId)} • Tel: {maskPhone(resident.phone)}
                 </span>
               </div>
               <div className="text-right bg-white p-2 rounded-lg border border-slate-200">
@@ -131,18 +132,21 @@ export const RelocateResidentModal: React.FC<RelocateResidentModalProps> = ({
                 <label className="block text-xs font-bold text-slate-700 mb-1">
                   Nueva Manzana (Mz) *
                 </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ej: B, C, D..."
+                <select
                   value={newBlock}
                   onChange={(e) => {
-                    const b = e.target.value.toUpperCase();
+                    const b = e.target.value;
                     setNewBlock(b);
-                    setNewSector(`Sector 16 - Mz ${b}`);
+                    setNewSector(`Madre Teresa de Calcuta - Mz ${b}`);
                   }}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-bold bg-white focus:ring-2 focus:ring-[#1877F2] focus:border-blue-500"
-                />
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-bold bg-white focus:ring-2 focus:ring-[#1877F2]"
+                >
+                  <option value="1">Manzana 1</option>
+                  <option value="2">Manzana 2</option>
+                  <option value="3">Manzana 3</option>
+                  <option value="4">Manzana 4</option>
+                  <option value="5">Manzana 5</option>
+                </select>
               </div>
 
               <div>
@@ -181,7 +185,7 @@ export const RelocateResidentModal: React.FC<RelocateResidentModalProps> = ({
                   <strong className="block font-bold">¡Lote Ocupado!</strong>
                   <span>
                     La Manzana {newBlock}, Lote {newLot} ya está registrada a nombre de{' '}
-                    <strong>{lotConflict.fullName}</strong> (C.I. {lotConflict.documentId}). Verifique el
+                    <strong>{lotConflict.fullName}</strong> (C.I. {maskDocumentId(lotConflict.documentId)}). Verifique el
                     número antes de proceder para evitar superposiciones.
                   </span>
                 </div>

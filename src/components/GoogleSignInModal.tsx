@@ -25,8 +25,8 @@ export const GoogleSignInModal: React.FC<GoogleSignInModalProps> = ({
   const [customEmail, setCustomEmail] = useState('');
   const [customName, setCustomName] = useState('');
   const [customDocId, setCustomDocId] = useState('');
-  const [customBarrio, setCustomBarrio] = useState('Sector 16');
-  const [customBlock, setCustomBlock] = useState('A');
+  const [customBarrio, setCustomBarrio] = useState('Madre Teresa de Calcuta');
+  const [customBlock, setCustomBlock] = useState('1');
   const [customLot, setCustomLot] = useState('01');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -195,12 +195,13 @@ export const GoogleSignInModal: React.FC<GoogleSignInModalProps> = ({
                   <select
                     value={customBlock}
                     onChange={(e) => setCustomBlock(e.target.value)}
-                    className="w-full px-2 py-1.5 text-xs border border-slate-300 rounded-lg bg-white"
+                    className="w-full px-2 py-1.5 text-xs border border-slate-300 rounded-lg bg-white font-bold"
                   >
-                    <option value="A">Mz A</option>
-                    <option value="B">Mz B</option>
-                    <option value="C">Mz C</option>
-                    <option value="D">Mz D</option>
+                    <option value="1">Mz 1</option>
+                    <option value="2">Mz 2</option>
+                    <option value="3">Mz 3</option>
+                    <option value="4">Mz 4</option>
+                    <option value="5">Mz 5</option>
                   </select>
                 </div>
                 <div>

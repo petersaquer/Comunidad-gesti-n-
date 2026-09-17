@@ -510,7 +510,7 @@ export const exportIndertOfficialCensusPDF = (
       x += cols[3].width;
 
       // 5. C.I.
-      doc.text(res.documentId, x + cols[4].width / 2, currentY + 5, { align: 'center' });
+      doc.text(maskDocumentId(res.documentId), x + cols[4].width / 2, currentY + 5, { align: 'center' });
       x += cols[4].width;
 
       // 6. Estado civil
@@ -521,7 +521,7 @@ export const exportIndertOfficialCensusPDF = (
       // 7. Pareja
       let partnerTxt = '-';
       if (res.hasPartner && res.partnerName) {
-        partnerTxt = `${res.partnerName.substring(0, 20)} (${res.partnerDocumentId || 'S/D'})`;
+        partnerTxt = `${res.partnerName.substring(0, 20)} (${maskDocumentId(res.partnerDocumentId) || 'S/D'})`;
       }
       doc.text(partnerTxt, x + 1.5, currentY + 5);
       x += cols[6].width;
@@ -637,7 +637,7 @@ export const exportCommissionConstitutionActPDF = (
 
     doc.setFontSize(10.5);
     doc.setTextColor(24, 119, 242);
-    doc.text(`COMISIÓN VECINAL PRO-TIERRA ASENTAMIENTO "${(settings.communityName || 'La Floresta 2').replace(/Comisión Vecinal Pro-Tierra Asentamiento /gi, '').replace(/"/g, '')}"`, pageWidth / 2, 29, { align: 'center' });
+    doc.text(`COMISIÓN VECINAL PRO-TIERRA ASENTAMIENTO "${(settings.communityName || 'Madre Teresa de Calcuta').replace(/Comisión Vecinal Pro-Tierra Asentamiento /gi, '').replace(/"/g, '')}"`, pageWidth / 2, 29, { align: 'center' });
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8.5);
@@ -660,7 +660,7 @@ export const exportCommissionConstitutionActPDF = (
     doc.setFontSize(8.5);
     doc.setTextColor(30, 41, 59);
 
-    const bodyP1 = `En el Asentamiento "${(settings.communityName || 'La Floresta 2').replace(/Comisión Vecinal Pro-Tierra Asentamiento /gi, '').replace(/"/g, '')}", ubicado en ${settings.settlementLocation}, Departamento y República del Paraguay, a los quince días del mes corriente, siendo las 14:00 horas, se reúnen en asamblea comunitaria los pobladores y jefes de familias ocupantes de las respectivas manzanas y lotes del inmueble rural-urbano individualizado en el Expediente Matriz INDERT N° ${settings.indertExpedienteNumber || '4821/2024'}, con el objeto de constituir de forma democrática y representativa la Comisión Vecinal Pro-Tierra, al amparo de las disposiciones consagradas en los Artículos 114 y 115 de la Constitución Nacional de la República del Paraguay, la Ley N° 1863/2002 que establece el Estatuto Agrario y concordantes del Código Civil Paraguayo.`;
+    const bodyP1 = `En el Asentamiento "${(settings.communityName || 'Madre Teresa de Calcuta').replace(/Comisión Vecinal Pro-Tierra Asentamiento /gi, '').replace(/"/g, '')}", ubicado en ${settings.settlementLocation}, Departamento y República del Paraguay, a los quince días del mes corriente, siendo las 14:00 horas, se reúnen en asamblea comunitaria los pobladores y jefes de familias ocupantes de las respectivas manzanas y lotes del inmueble rural-urbano individualizado en el Expediente Matriz INDERT N° ${settings.indertExpedienteNumber || '4821/2024'}, con el objeto de constituir de forma democrática y representativa la Comisión Vecinal Pro-Tierra, al amparo de las disposiciones consagradas en los Artículos 114 y 115 de la Constitución Nacional de la República del Paraguay, la Ley N° 1863/2002 que establece el Estatuto Agrario y concordantes del Código Civil Paraguayo.`;
 
     const splitP1 = doc.splitTextToSize(bodyP1, contentWidth);
     doc.text(splitP1, margin, currentY);
@@ -770,7 +770,7 @@ export const exportCommissionConstitutionActPDF = (
     doc.setFontSize(6.5);
     doc.text('Tesorero/a Comunal', margin + sigW * 2.5, currentY + 7, { align: 'center' });
 
-    const filename = `Acta_Constitucion_${(settings.communityName || 'La_Floresta_2').replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+    const filename = `Acta_Constitucion_${(settings.communityName || 'Madre_Teresa_de_Calcuta').replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
     doc.save(filename);
   } catch (err) {
     console.error('Error generating commission constitution act PDF:', err);
@@ -791,8 +791,8 @@ export const exportCadastralRegistryToExcel = (
       Lote: r.lot,
       'Sector / Zona': r.sector || 'Zona Residencial',
       'Titular Ocupante': r.fullName,
-      'C.I. N°': r.documentId,
-      'Teléfono Contacto': r.phone,
+      'C.I. N°': maskDocumentId(r.documentId),
+      'Teléfono Contacto': maskPhoneNumber(r.phone),
       'Fecha Inicio Ocupación': r.occupationDate,
       'Miembros Familia': r.familyMembersCount,
       'Estado Ocupacional': r.status === 'active' ? 'OCUPACIÓN REGULAR Y EFECTIVA' : r.status.toUpperCase(),
