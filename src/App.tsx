@@ -41,6 +41,8 @@ import {
   fetchStateFromFirebase,
   syncStateToFirebase,
   resetFirebaseOnServer,
+  ensureFirebaseAuth,
+  signOutFromFirebase,
 } from './utils/firebaseClient';
 import { FacebookHeader } from './components/FacebookHeader';
 import { FacebookStories } from './components/FacebookStories';
@@ -170,6 +172,13 @@ export default function App() {
     syncStateToFirebase(appState);
   }, [appState]);
 
+  // Ensure Firebase Auth session aligns with currentUser
+  useEffect(() => {
+    if (currentUser) {
+      ensureFirebaseAuth(currentUser);
+    }
+  }, [currentUser]);
+
   // Auth Handlers
   const handleLogin = (user: UserAccount) => {
     setAppState((prev) => ({
@@ -183,7 +192,9 @@ export default function App() {
     if (!currentUser) return;
     setAppState((prev) => {
       const updatedUsers = prev.users.map((u) =>
-        u.id === currentUser.id ? { ...u, password: newPassword } : u
+        u.id === currentUser.id || u.documentId === currentUser.documentId
+          ? { ...u, password: newPassword }
+          : u
       );
       const updatedCurrentUser: UserAccount = {
         ...currentUser,
@@ -301,6 +312,7 @@ export default function App() {
       ...prev,
       currentUser: null,
     }));
+    signOutFromFirebase();
   };
 
   // Administration Settings and Backup Handlers

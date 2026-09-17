@@ -25,7 +25,7 @@ import {
   initialMeetings,
 } from '../mockData/initialData';
 
-const STORAGE_KEYS = {
+export const STORAGE_KEYS = {
   RESIDENTS: 'comunidapp_residents_v1',
   CONTRIBUTIONS: 'comunidapp_contributions_v1',
   EXPENSES: 'comunidapp_expenses_v1',
